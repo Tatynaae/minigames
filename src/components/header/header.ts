@@ -1,4 +1,5 @@
 import './header.scss';
+import logo from '../../assets/icons/logo.svg';
 
 export const AUTH_OPEN_EVENT = 'auth:open';
 
@@ -12,14 +13,7 @@ const NAV_LINKS: { label: string; active?: boolean }[] = [
 ];
 
 function renderLogo(): string {
-  return `
-    <span class="header__logo" aria-hidden="true">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="30" height="30" rx="6" stroke="currentColor" stroke-width="2" />
-        <path d="M9 20V12L16 17L23 12V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </span>
-  `;
+  return `<img class="header__logo-img" src="${logo}" alt="MiniGames" />`;
 }
 
 function renderDesktopLinks(): string {
@@ -48,7 +42,6 @@ export function createHeader(): HTMLElement {
   header.innerHTML = `
     <a href="/" class="header__brand" aria-label="MiniGames home">
       ${renderLogo()}
-      <span class="header__wordmark">MiniGames</span>
     </a>
 
     <nav class="header__nav" aria-label="Primary">
@@ -79,7 +72,6 @@ export function createHeader(): HTMLElement {
       <div class="mobile-menu__top">
         <a href="/" class="header__brand" aria-label="MiniGames home">
           ${renderLogo()}
-          <span class="header__wordmark">MiniGames</span>
         </a>
         <button type="button" class="mobile-menu__close" aria-label="Close menu">
           <span class="material-symbols-outlined" aria-hidden="true">close</span>

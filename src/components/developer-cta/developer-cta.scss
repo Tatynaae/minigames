@@ -2,7 +2,8 @@
 @use '../../styles/mixins' as *;
 
 .developer-cta {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
   flex-direction: row;
   align-items: center;
   gap: $space-7;
@@ -58,6 +59,7 @@
   border: $border-regular solid $color-primary-dark;
   border-radius: $radius-lg;
   box-shadow: $shadow-cta-card;
+  max-height: 344px;
 
   @include tablet-down {
     align-self: stretch;

@@ -195,14 +195,6 @@
   }
 }
 
-.footer__credits {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: $space-6;
-}
-
 .footer__designed {
   @include mobile-down {
     display: none;

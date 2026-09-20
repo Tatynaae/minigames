@@ -31,30 +31,15 @@
   flex: none;
 }
 
-.header__logo {
-  display: flex;
-  width: 32px;
+.header__logo-img {
   height: 32px;
+  width: auto;
   flex: none;
-  color: $color-icon-blue;
 
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.header__wordmark {
-  font-weight: $font-weight-bold;
-  font-size: $font-size-lg;
-  line-height: $line-height-lg;
-  color: $color-primary-dark;
-  white-space: nowrap;
-
-  // 20px/24px: compact wordmark size used in the tablet/mobile header and footer
+  // 150px: compact brand logo width used in the tablet/mobile header
   @include tablet-down {
-    font-size: 20px;
-    line-height: 24px;
+    height: auto;
+    width: 150px;
   }
 }
 
