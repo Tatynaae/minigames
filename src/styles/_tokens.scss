@@ -1,0 +1,67 @@
+// Colors
+$color-bg-cream: #f9f8f3;
+$color-primary-dark: #242145;
+$color-text-muted: #5f5d75;
+$color-text-muted-light: #b9b5c9;
+$color-white: #ffffff;
+$color-accent-yellow: #ffd02b;
+$color-bg-dark: #1e1b3a;
+$color-bg-dark-secondary: #2a264f;
+$color-icon-blue: #3a2ebf;
+$color-google-red: #ea4335;
+$color-shadow-dark: #111111;
+$color-backdrop: rgba($color-bg-dark, 0.6);
+
+// Spacing scale (px values used across the Figma design)
+$space-1: 4px;
+$space-2: 8px;
+$space-2-5: 10px;
+$space-3: 16px;
+$space-4: 20px;
+$space-5: 24px;
+$space-6: 32px;
+$space-7: 40px;
+$space-8: 48px;
+$space-9: 64px;
+$space-10: 80px;
+$space-11: 120px;
+
+// Border widths
+$border-thin: 1px;
+$border-regular: 2px;
+$border-medium: 2.5px;
+$border-thick: 3px;
+
+// Corner radii
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 24px;
+$radius-full: 9999px;
+
+// Shadows
+$shadow-dialog: 8px 8px 0 $color-shadow-dark;
+$shadow-button: 0 4px 0 $color-primary-dark;
+
+// Typography
+$font-family-base: 'Inter', sans-serif;
+$font-family-icon: 'Material Symbols Outlined';
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 24px;
+
+$line-height-xs: 15px;
+$line-height-sm: 17px;
+$line-height-base: 19px;
+$line-height-lg: 29px;
+$line-height-relaxed: 150%;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+// Breakpoints
+$breakpoint-mobile: 375px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1920px;
