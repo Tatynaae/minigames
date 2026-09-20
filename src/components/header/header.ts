@@ -61,6 +61,10 @@ export function createHeader(): HTMLElement {
       </div>
     </nav>
 
+    <button type="button" class="btn btn--accent header__mobile-cta" data-auth-trigger="register">
+      Sign Up
+    </button>
+
     <button
       type="button"
       class="header__burger"

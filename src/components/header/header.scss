@@ -13,6 +13,14 @@
   padding: $space-5 clamp($space-3, 4vw, $space-10);
   background: $color-bg-cream;
   border-bottom: $border-regular solid $color-primary-dark;
+
+  @include tablet-down {
+    padding: $space-3 $space-7;
+  }
+
+  @include mobile-down {
+    padding: $space-3;
+  }
 }
 
 .header__brand {
@@ -42,6 +50,12 @@
   line-height: $line-height-lg;
   color: $color-primary-dark;
   white-space: nowrap;
+
+  // 20px/24px: compact wordmark size used in the tablet/mobile header and footer
+  @include tablet-down {
+    font-size: 20px;
+    line-height: 24px;
+  }
 }
 
 .header__nav {
@@ -85,6 +99,17 @@
   flex-direction: row;
   align-items: flex-start;
   gap: $space-3;
+}
+
+.header__mobile-cta {
+  display: none;
+  flex: none;
+
+  @include tablet-down {
+    display: inline-flex;
+    padding: $space-2 $space-3;
+    height: 33px;
+  }
 }
 
 .header__burger {

@@ -1,5 +1,14 @@
 @use 'tokens' as *;
+@use 'mixins';
 @use 'buttons';
+
+:root {
+  --avatar-yellow: #{$color-accent-yellow};
+  --avatar-mint: #{$color-avatar-mint};
+  --avatar-sky: #{$color-avatar-sky};
+  --avatar-pink: #{$color-avatar-pink};
+  --avatar-lavender: #{$color-avatar-lavender};
+}
 
 *,
 *::before,
@@ -45,6 +54,43 @@ a {
   text-decoration: none;
 }
 
+.visually-hidden {
+  @include mixins.visually-hidden;
+}
+
+.section-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-2;
+}
+
+.section-header__bar {
+  width: 8px;
+  height: 32px;
+  flex: none;
+  background: $color-accent-yellow;
+  border: 1.5px solid $color-primary-dark;
+  border-radius: $border-regular;
+
+  @include mixins.tablet-down {
+    height: 24px;
+  }
+}
+
+.section-header__title {
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-xl;
+  line-height: $line-height-xl;
+  color: $color-primary-dark;
+
+  @include mixins.tablet-down {
+    font-size: $font-size-lg;
+    line-height: $line-height-lg;
+  }
+}
+
 .material-symbols-outlined {
   font-family: $font-family-icon;
   font-weight: normal;
@@ -52,4 +98,8 @@ a {
   line-height: 1;
   display: inline-block;
   white-space: nowrap;
+
+  &.is-filled {
+    font-variation-settings: 'FILL' 1;
+  }
 }

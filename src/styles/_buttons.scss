@@ -1,5 +1,6 @@
 @use 'sass:color';
 @use 'tokens' as *;
+@use 'mixins' as *;
 
 .btn {
   display: inline-flex;
@@ -73,6 +74,77 @@
   &:active {
     box-shadow: none;
     transform: translateY(4px);
+  }
+}
+
+.btn--hero {
+  box-sizing: border-box;
+  height: 54px;
+  padding: $space-3 $space-5;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-primary-dark;
+  background: $color-accent-yellow;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-sm;
+
+  &:hover {
+    background: color.adjust($color-accent-yellow, $lightness: -6%);
+  }
+
+  &:active {
+    background: color.adjust($color-accent-yellow, $lightness: -12%);
+  }
+
+  @include tablet-down {
+    height: 37px;
+    padding: $space-2-5 $space-4;
+    font-size: $font-size-sm;
+    line-height: $line-height-sm;
+  }
+
+  @include mobile-down {
+    height: 31px;
+    padding: $space-2 $space-3;
+    font-size: $font-size-xs;
+    line-height: $line-height-xs;
+  }
+}
+
+.btn--submit {
+  box-sizing: border-box;
+  height: 56px;
+  gap: $space-2;
+  padding: $space-3 $space-5;
+  font-family: $font-family-secondary;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-primary-dark;
+  background: $color-accent-yellow;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-md;
+  box-shadow: $shadow-cta-button;
+
+  &:hover {
+    background: color.adjust($color-accent-yellow, $lightness: -6%);
+  }
+
+  &:active {
+    background: color.adjust($color-accent-yellow, $lightness: -12%);
+  }
+
+  @include tablet-down {
+    height: 37px;
+    padding: $space-2-5 $space-4;
+    font-size: $font-size-sm;
+    line-height: $line-height-sm;
+  }
+
+  @include mobile-down {
+    height: 32px;
+    padding: $space-2 $space-3;
+    font-size: $font-size-xs;
+    line-height: $line-height-xs;
   }
 }
 

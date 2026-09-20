@@ -1,0 +1,113 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.developer-cta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-7;
+  width: 100%;
+  padding: $space-7 clamp($space-3, 6vw, $space-11);
+
+  @include tablet-down {
+    flex-direction: column;
+    gap: $space-5;
+    padding: $space-5 $space-7;
+  }
+
+  @include mobile-down {
+    align-items: flex-start;
+    gap: $space-3;
+    padding: $space-3;
+  }
+}
+
+.developer-cta__illustration {
+  flex: 1 1 680px;
+  max-width: 680px;
+  height: 480px;
+  background-image: var(--developer-illustration);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border-radius: $radius-lg;
+  transform: rotate(-0.24deg);
+
+  @include tablet-down {
+    flex: none;
+    align-self: stretch;
+    max-width: none;
+    height: 300px;
+    transform: none;
+  }
+
+  @include mobile-down {
+    height: 227px;
+  }
+}
+
+.developer-cta__card {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-5;
+  padding: $space-7;
+  background: $color-white;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-cta-card;
+
+  @include tablet-down {
+    align-self: stretch;
+    gap: $space-3;
+    padding: $space-6;
+  }
+
+  @include mobile-down {
+    padding: $space-5;
+  }
+}
+
+.developer-cta__title {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-xl;
+  line-height: $line-height-snug;
+  color: $color-primary-dark;
+
+  @include tablet-down {
+    font-size: $font-size-lg;
+  }
+}
+
+.developer-cta__description {
+  font-weight: $font-weight-regular;
+  font-size: $font-size-md;
+  line-height: $line-height-relaxed;
+  color: $color-text-muted;
+
+  @include tablet-down {
+    font-size: $font-size-sm;
+  }
+
+  @include mobile-down {
+    font-size: $font-size-xs;
+  }
+}
+
+.developer-cta__contact {
+  font-size: $font-size-sm;
+  line-height: $line-height-sm;
+  color: $color-text-muted-dark;
+
+  @include tablet-down {
+    font-size: $font-size-xs;
+    line-height: $line-height-xs;
+  }
+}
+
+.developer-cta__contact a {
+  font-weight: $font-weight-medium;
+  text-decoration: underline;
+}

@@ -11,6 +11,13 @@ $color-icon-blue: #3a2ebf;
 $color-google-red: #ea4335;
 $color-shadow-dark: #111111;
 $color-backdrop: rgba($color-bg-dark, 0.6);
+$color-text-muted-dark: #737380;
+$color-border-light: #e5e7eb;
+$color-favorite-red: #ff4b4b;
+$color-avatar-mint: #a3e2c9;
+$color-avatar-sky: #bce3ff;
+$color-avatar-pink: #ffc6ff;
+$color-avatar-lavender: #e8dff5;
 
 // Spacing scale (px values used across the Figma design)
 $space-1: 4px;
@@ -24,7 +31,9 @@ $space-7: 40px;
 $space-8: 48px;
 $space-9: 64px;
 $space-10: 80px;
+$space-9-5: 72px;
 $space-11: 120px;
+$space-12: 112px;
 
 // Border widths
 $border-thin: 1px;
@@ -35,31 +44,51 @@ $border-thick: 3px;
 // Corner radii
 $radius-sm: 8px;
 $radius-md: 12px;
+$radius-md-lg: 16px;
 $radius-lg: 24px;
 $radius-full: 9999px;
 
 // Shadows
 $shadow-dialog: 8px 8px 0 $color-shadow-dark;
 $shadow-button: 0 4px 0 $color-primary-dark;
+$shadow-card-sm: 4px 4px 0 $color-primary-dark;
+$shadow-card-lg: 6px 6px 0 $color-primary-dark;
+$shadow-card-xl: 8px 8px 0 $color-primary-dark;
+$shadow-cta-card:
+  0 2px 8px -4px rgba(0, 0, 0, 0.04),
+  0 14px 30px -10px rgba(0, 0, 0, 0.08);
+$shadow-cta-button: 0 10px 20px -10px rgba(0, 0, 0, 0.1);
 
 // Typography
 $font-family-base: 'Inter', sans-serif;
+$font-family-secondary: 'Roboto', sans-serif;
 $font-family-icon: 'Material Symbols Outlined';
 
 $font-size-xs: 12px;
 $font-size-sm: 14px;
 $font-size-base: 16px;
+$font-size-md: 18px;
 $font-size-lg: 24px;
+$font-size-xl: 32px;
+$font-size-xxl: 56px;
 
 $line-height-xs: 15px;
 $line-height-sm: 17px;
 $line-height-base: 19px;
+$line-height-md: 22px;
 $line-height-lg: 29px;
+$line-height-xl: 39px;
 $line-height-relaxed: 150%;
+$line-height-tight: 110%;
+$line-height-comfortable: 115%;
+$line-height-snug: 120%;
+$line-height-loose: 140%;
 
 $font-weight-regular: 400;
 $font-weight-medium: 500;
+$font-weight-semibold: 600;
 $font-weight-bold: 700;
+$font-weight-black: 800;
 
 // Breakpoints
 $breakpoint-mobile: 375px;
