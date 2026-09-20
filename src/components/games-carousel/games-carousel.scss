@@ -1,0 +1,223 @@
+@use 'sass:color';
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.games-section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-7;
+  width: 100%;
+  padding: $space-7 clamp($space-3, 6vw, $space-11);
+
+  @include tablet-down {
+    gap: $space-5;
+    padding: $space-5 $space-7;
+  }
+
+  @include mobile-down {
+    gap: $space-3;
+    padding: $space-3;
+  }
+}
+
+.games-section__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.carousel-nav {
+  display: flex;
+  flex-direction: row;
+  gap: $space-3;
+}
+
+.carousel-nav__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  color: $color-primary-dark;
+  background: $color-white;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-full;
+
+  &:hover {
+    background: $color-accent-yellow;
+  }
+
+  &:active {
+    background: color.adjust($color-accent-yellow, $lightness: -6%);
+  }
+
+  @include tablet-down {
+    width: 40px;
+    height: 40px;
+
+    .material-symbols-outlined {
+      font-size: $font-size-lg - 6px;
+    }
+  }
+}
+
+.carousel-track {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: $space-2;
+  padding: 0 $space-2;
+  list-style: none;
+  overflow: hidden;
+
+  @include mobile-down {
+    padding: 0 $space-1;
+  }
+}
+
+.game-card {
+  position: relative;
+  box-sizing: border-box;
+  flex: 1 0 0;
+  height: 384px;
+  overflow: hidden;
+  background: $color-white;
+  border: $border-medium solid $color-primary-dark;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card-sm;
+  transition:
+    flex-grow 0.3s ease,
+    flex-basis 0.3s ease;
+
+  &.game-card--hidden {
+    display: none;
+  }
+
+  &.game-card--collapsed {
+    flex: 0 0 120px;
+    isolation: isolate;
+
+    @include tablet-down {
+      display: none;
+    }
+  }
+
+  &.game-card--featured {
+    flex-grow: 2.83;
+
+    @include tablet-down {
+      flex: none;
+      width: 448px;
+    }
+
+    @include mobile-down {
+      width: 218px;
+    }
+  }
+
+  @include tablet-down {
+    flex: none;
+    width: 104px;
+    min-width: 104px;
+    height: 280px;
+    border-radius: $radius-md;
+  }
+
+  @include mobile-down {
+    width: 56px;
+    min-width: 56px;
+    height: 200px;
+  }
+}
+
+.game-card__trigger {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  cursor: pointer;
+}
+
+.game-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.game-card__overlay {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-3;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.4) 17.31%,
+    rgba(0, 0, 0, 0.85) 46.15%
+  );
+  opacity: 1;
+  transition: opacity 0.2s ease;
+
+  .game-card--collapsed & {
+    opacity: 0;
+  }
+}
+
+.game-card__title {
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-card__stats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.game-card__stat {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-1;
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-white;
+
+  @include mobile-down {
+    font-size: $font-size-xs;
+    line-height: $line-height-xs;
+  }
+}
+
+.game-card__stat .material-symbols-outlined {
+  font-size: $font-size-lg;
+}
+
+.game-card__stat-icon--star {
+  color: $color-accent-yellow;
+}
+
+.game-card__stat-icon--favorite {
+  color: $color-favorite-red;
+}

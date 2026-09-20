@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../styles/tokens' as *;
 @use '../../styles/mixins' as *;
 
@@ -13,6 +14,14 @@
   padding: $space-5 clamp($space-3, 4vw, $space-10);
   background: $color-bg-cream;
   border-bottom: $border-regular solid $color-primary-dark;
+
+  @include tablet-down {
+    padding: $space-3 $space-7;
+  }
+
+  @include mobile-down {
+    padding: $space-3;
+  }
 }
 
 .header__brand {
@@ -21,27 +30,22 @@
   align-items: center;
   gap: $space-2;
   flex: none;
-}
 
-.header__logo {
-  display: flex;
-  width: 32px;
-  height: 32px;
-  flex: none;
-  color: $color-icon-blue;
-
-  svg {
-    width: 100%;
-    height: 100%;
+  // 150px: compact brand logo width used in the tablet/mobile header
+  @include tablet-down {
+    width: 150px;
   }
 }
 
-.header__wordmark {
-  font-weight: $font-weight-bold;
-  font-size: $font-size-lg;
-  line-height: $line-height-lg;
-  color: $color-primary-dark;
-  white-space: nowrap;
+.header__logo-img {
+  height: 32px;
+  width: auto;
+  flex: none;
+
+  @include tablet-down {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .header__nav {
@@ -87,6 +91,23 @@
   gap: $space-3;
 }
 
+.header__mobile-cta {
+  display: none;
+  flex: none;
+
+  @include tablet-down {
+    display: inline-flex;
+    padding: $space-2 $space-3;
+    height: 33px;
+  }
+
+  // Only the tablet header shows a Sign Up button next to the burger;
+  // the mobile header has just the logo and burger (per spec).
+  @include mobile-down {
+    display: none;
+  }
+}
+
 .header__burger {
   display: none;
   align-items: center;
@@ -105,15 +126,41 @@
   }
 }
 
-.mobile-menu {
+.mobile-menu-backdrop {
   position: fixed;
   inset: 0;
+  z-index: 99;
+  background: $color-backdrop;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @include tablet-up {
+    display: none;
+  }
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: auto;
   z-index: 100;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: $space-8;
-  padding: $space-5 $space-3;
-  background: $color-bg-cream;
+  gap: $space-6;
+  width: 100%;
+  max-width: 100%;
+  padding: $space-5;
+  background: $color-bg-dark;
+  border-left: $border-regular solid $color-primary-dark;
   transform: translateX(100%);
   transition: transform 0.3s ease;
 
@@ -140,15 +187,20 @@
   width: 32px;
   height: 32px;
   padding: $space-2;
-  color: $color-icon-blue;
-  background: $color-white;
-  border: $border-regular solid $color-primary-dark;
+  color: $color-white;
+  background: $color-bg-dark-secondary;
+  border: none;
   border-radius: $radius-sm;
+
+  &:hover {
+    background: color.adjust($color-bg-dark-secondary, $lightness: 8%);
+  }
 }
 
 .mobile-menu__links {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   gap: $space-5;
   list-style: none;
 }
@@ -156,24 +208,29 @@
 .mobile-menu__link {
   display: block;
   font-weight: $font-weight-medium;
-  font-size: $font-size-lg;
-  color: $color-text-muted;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-text-muted-light;
 
   &:hover {
-    color: $color-primary-dark;
+    color: $color-white;
   }
 }
 
 .mobile-menu__link--active {
   font-weight: $font-weight-bold;
-  color: $color-primary-dark;
+  color: $color-accent-yellow;
+
+  &:hover {
+    color: $color-accent-yellow;
+  }
 }
 
 .mobile-menu__buttons {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: $space-3;
-  margin-top: auto;
 
   .btn {
     width: 100%;

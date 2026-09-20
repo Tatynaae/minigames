@@ -8,8 +8,8 @@
     "build": "webpack --config webpack.prod.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "format": "prettier --write \"src/**/*.{ts,scss,html}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,scss,html}\"",
+    "format": "prettier --write \"src/**/*.{ts,scss,html,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,scss,html,json}\"",
     "prepare": "husky"
   },
   "devDependencies": {
