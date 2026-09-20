@@ -11,7 +11,8 @@
   padding: $space-7 clamp($space-3, 6vw, $space-11);
 
   @include tablet-down {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: $space-5;
     padding: $space-5 $space-7;
   }
@@ -40,6 +41,8 @@
     max-width: none;
     height: 300px;
     transform: none;
+    width: 100%;
+    background-size: cover;
   }
 
   @include mobile-down {

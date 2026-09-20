@@ -71,20 +71,22 @@ function sizeForDistance(distance: number): CardSize {
 function renderGameCard(game: GameCardData): string {
   return `
     <li class="game-card" data-card>
-      <img class="game-card__image" src="${game.image}" alt="${game.name}" loading="lazy" />
-      <div class="game-card__overlay">
-        <p class="game-card__title">${game.name}</p>
-        <div class="game-card__stats">
-          <span class="game-card__stat">
-            <span class="material-symbols-outlined is-filled game-card__stat-icon--star" aria-hidden="true">star</span>
-            ${game.rating}
-          </span>
-          <span class="game-card__stat">
-            <span class="material-symbols-outlined is-filled game-card__stat-icon--favorite" aria-hidden="true">favorite</span>
-            ${game.likes}
-          </span>
+      <button type="button" class="game-card__trigger" data-card-trigger aria-label="Feature ${game.name}">
+        <img class="game-card__image" src="${game.image}" alt="${game.name}" loading="lazy" />
+        <div class="game-card__overlay">
+          <p class="game-card__title">${game.name}</p>
+          <div class="game-card__stats">
+            <span class="game-card__stat">
+              <span class="material-symbols-outlined is-filled game-card__stat-icon--star" aria-hidden="true">star</span>
+              ${game.rating}
+            </span>
+            <span class="game-card__stat">
+              <span class="material-symbols-outlined is-filled game-card__stat-icon--favorite" aria-hidden="true">favorite</span>
+              ${game.likes}
+            </span>
+          </div>
         </div>
-      </div>
+      </button>
     </li>
   `;
 }
@@ -127,13 +129,23 @@ function initCarouselBehavior(section: HTMLElement): void {
   const nextButton = section.querySelector<HTMLButtonElement>('[data-carousel-next]');
 
   let featuredIndex = INITIAL_FEATURED_INDEX;
+  const total = cards.length;
 
   const applySizes = (): void => {
     cards.forEach((card, index) => {
-      const distance = Math.abs(index - featuredIndex);
-      const size = sizeForDistance(distance);
+      // Signed offset along the shorter circular path from the featured card,
+      // so the two immediate visual neighbours are always the ones sized
+      // "regular" — even when the featured card sits at either end of the
+      // list. Without this, hiding the collapsed cards would leave the
+      // featured card with a neighbour on only one side.
+      let offset = index - featuredIndex;
+      if (offset > total / 2) offset -= total;
+      if (offset < -total / 2) offset += total;
+
+      const size = sizeForDistance(Math.abs(offset));
       card.classList.toggle('game-card--collapsed', size === 'collapsed');
       card.classList.toggle('game-card--featured', size === 'featured');
+      card.style.order = String(offset);
     });
   };
 
@@ -145,6 +157,14 @@ function initCarouselBehavior(section: HTMLElement): void {
   nextButton?.addEventListener('click', () => {
     featuredIndex = (featuredIndex + 1) % cards.length;
     applySizes();
+  });
+
+  cards.forEach((card, index) => {
+    const trigger = card.querySelector<HTMLButtonElement>('[data-card-trigger]');
+    trigger?.addEventListener('click', () => {
+      featuredIndex = index;
+      applySizes();
+    });
   });
 
   applySizes();

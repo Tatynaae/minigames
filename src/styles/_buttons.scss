@@ -39,6 +39,21 @@
   }
 }
 
+.btn--outline-light {
+  padding: $space-2-5 $space-4;
+  color: $color-white;
+  background: transparent;
+  border: $border-regular solid $color-white;
+
+  &:hover {
+    background: rgba($color-white, 0.1);
+  }
+
+  &:active {
+    background: rgba($color-white, 0.18);
+  }
+}
+
 .btn--accent {
   padding: $space-2-5 $space-4;
   color: $color-primary-dark;
