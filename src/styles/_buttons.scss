@@ -1,0 +1,95 @@
+@use 'sass:color';
+@use 'tokens' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  line-height: $line-height-sm;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.05s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.btn--outline {
+  padding: $space-2-5 $space-4;
+  color: $color-primary-dark;
+  background: transparent;
+  border: $border-regular solid $color-primary-dark;
+
+  &:hover {
+    background: rgba($color-primary-dark, 0.06);
+  }
+
+  &:active {
+    background: rgba($color-primary-dark, 0.12);
+  }
+}
+
+.btn--accent {
+  padding: $space-2-5 $space-4;
+  color: $color-primary-dark;
+  background: $color-accent-yellow;
+  border: $border-regular solid $color-primary-dark;
+
+  &:hover {
+    background: color.adjust($color-accent-yellow, $lightness: -6%);
+  }
+
+  &:active {
+    background: color.adjust($color-accent-yellow, $lightness: -12%);
+  }
+}
+
+.btn--cta {
+  box-sizing: border-box;
+  width: 100%;
+  height: 52px;
+  padding: $space-3 $space-5;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+  background: $color-accent-yellow;
+  border: $border-medium solid $color-primary-dark;
+  border-radius: $radius-md;
+  box-shadow: $shadow-button;
+
+  &:hover {
+    background: color.adjust($color-accent-yellow, $lightness: -6%);
+  }
+
+  &:active {
+    box-shadow: none;
+    transform: translateY(4px);
+  }
+}
+
+.btn--google {
+  box-sizing: border-box;
+  width: 100%;
+  height: 50px;
+  gap: $space-3;
+  padding: $space-3 $space-5;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+  background: $color-white;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-md;
+
+  &:hover {
+    background: rgba($color-primary-dark, 0.04);
+  }
+}
