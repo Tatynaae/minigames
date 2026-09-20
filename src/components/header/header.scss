@@ -31,7 +31,6 @@
   gap: $space-2;
   flex: none;
 
-  // 150px: compact brand logo width used in the tablet/mobile header
   @include tablet-down {
     width: 150px;
   }
@@ -91,6 +90,13 @@
   gap: $space-3;
 }
 
+.header__actions {
+  @include tablet-down {
+    display: flex;
+    gap: $space-3;
+  }
+}
+
 .header__mobile-cta {
   display: none;
   flex: none;
@@ -101,8 +107,6 @@
     height: 33px;
   }
 
-  // Only the tablet header shows a Sign Up button next to the burger;
-  // the mobile header has just the logo and burger (per spec).
   @include mobile-down {
     display: none;
   }

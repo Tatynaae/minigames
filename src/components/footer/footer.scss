@@ -73,7 +73,6 @@
   line-height: $line-height-lg;
   color: $color-white;
 
-  // 20px/24px: compact wordmark size shared with the tablet/mobile header
   @include tablet-down {
     font-size: 20px;
     line-height: 24px;
@@ -168,6 +167,10 @@
   display: flex;
   flex-direction: column;
   gap: $space-5;
+
+  @include mobile-down {
+    gap: $space-2;
+  }
 }
 
 .footer__divider {
@@ -187,12 +190,19 @@
   color: $color-text-muted-light;
 
   @include mobile-down {
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: flex-start;
-    gap: $space-2;
+    gap: 12px;
     font-size: $font-size-xs;
     line-height: $line-height-xs;
   }
+}
+
+.footer__credits {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-3;
 }
 
 .footer__designed {

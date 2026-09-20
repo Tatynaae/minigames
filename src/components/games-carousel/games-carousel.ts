@@ -134,11 +134,6 @@ function initCarouselBehavior(section: HTMLElement): void {
 
   const applySizes = (): void => {
     cards.forEach((card, index) => {
-      // Signed offset along the shorter circular path from the featured card,
-      // so the two immediate visual neighbours are always the ones sized
-      // "regular" — even when the featured card sits at either end of the
-      // list. Without this, hiding the collapsed cards would leave the
-      // featured card with a neighbour on only one side.
       let offset = index - featuredIndex;
       if (offset > total / 2) offset -= total;
       if (offset < -total / 2) offset += total;

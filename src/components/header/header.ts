@@ -54,19 +54,20 @@ export function createHeader(): HTMLElement {
       </div>
     </nav>
 
-    <button type="button" class="btn btn--accent header__mobile-cta" data-auth-trigger="register">
-      Sign Up
-    </button>
-
-    <button
-      type="button"
-      class="header__burger"
-      aria-label="Open menu"
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-    >
-      <span class="material-symbols-outlined" aria-hidden="true">menu</span>
-    </button>
+    <div class="header__actions">
+      <button type="button" class="btn btn--accent header__mobile-cta" data-auth-trigger="register">
+        Sign Up
+      </button>
+      <button
+        type="button"
+        class="header__burger"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+    </div>
 
     <div class="mobile-menu-backdrop" data-mobile-menu-backdrop hidden></div>
 

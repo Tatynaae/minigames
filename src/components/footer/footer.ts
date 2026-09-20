@@ -78,16 +78,18 @@ export function createFooter(): HTMLElement {
       <hr class="footer__divider" />
       <div class="footer__meta">
         <p>&copy; 2026 MiniGames. All rights reserved.</p>
-        <a href="${RS_SCHOOL_COURSE_URL}" class="footer__rs-link" target="_blank" rel="noopener noreferrer">
-            <span class="footer__rs-badge" aria-hidden="true">RS</span>
-            <span>RS School</span>
-        </a>
-        <a href="${GITHUB_PROFILE_URL}" class="footer__github-link" target="_blank" rel="noopener noreferrer">
-            <span class="footer__github-badge" aria-hidden="true">
-              <span class="material-symbols-outlined" aria-hidden="true">code</span>
-            </span>
-            <span>@Tatynaae</span>
-        </a>
+        <div class="footer__credits">
+          <a href="${RS_SCHOOL_COURSE_URL}" class="footer__rs-link" target="_blank" rel="noopener noreferrer">
+              <span class="footer__rs-badge" aria-hidden="true">RS</span>
+              <span>RS School</span>
+          </a>
+          <a href="${GITHUB_PROFILE_URL}" class="footer__github-link" target="_blank" rel="noopener noreferrer">
+              <span class="footer__github-badge" aria-hidden="true">
+                <span class="material-symbols-outlined" aria-hidden="true">code</span>
+              </span>
+              <span>@Tatynaae</span>
+          </a>
+        </div>
         <p class="footer__designed">Designed with love</p>
       </div>
     </div>

@@ -110,8 +110,7 @@
     flex-grow: 2.83;
 
     @include tablet-down {
-      flex: none;
-      width: 448px;
+      flex: 2 1 0;
     }
 
     @include mobile-down {
@@ -120,9 +119,8 @@
   }
 
   @include tablet-down {
-    flex: none;
-    width: 104px;
-    min-width: 104px;
+    flex: 1 1 0;
+    min-width: 0;
     height: 280px;
     border-radius: $radius-md;
   }
