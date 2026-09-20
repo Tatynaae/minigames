@@ -10,7 +10,7 @@ import paliaCard from '../../assets/images/palia-card.jpg';
 import catMailCoCard from '../../assets/images/cat-mail-co-card.jpg';
 import tinyGladeCard from '../../assets/images/tiny-glade-card.jpg';
 
-type CardSize = 'collapsed' | 'regular' | 'featured';
+type CardSize = 'hidden' | 'collapsed' | 'regular' | 'featured';
 
 interface GameSeedEntry {
   slug: string;
@@ -65,7 +65,8 @@ const INITIAL_FEATURED_INDEX = 0;
 function sizeForDistance(distance: number): CardSize {
   if (distance === 0) return 'featured';
   if (distance === 1) return 'regular';
-  return 'collapsed';
+  if (distance === 2) return 'collapsed';
+  return 'hidden';
 }
 
 function renderGameCard(game: GameCardData): string {
@@ -145,6 +146,7 @@ function initCarouselBehavior(section: HTMLElement): void {
       const size = sizeForDistance(Math.abs(offset));
       card.classList.toggle('game-card--collapsed', size === 'collapsed');
       card.classList.toggle('game-card--featured', size === 'featured');
+      card.classList.toggle('game-card--hidden', size === 'hidden');
       card.style.order = String(offset);
     });
   };
