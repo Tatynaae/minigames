@@ -1,5 +1,6 @@
 import './header.scss';
 import logo from '../../assets/icons/logo.svg';
+import logoWhite from '../../assets/icons/logo-white.svg';
 
 export const AUTH_OPEN_EVENT = 'auth:open';
 
@@ -74,7 +75,7 @@ export function createHeader(): HTMLElement {
     <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation" hidden>
       <div class="mobile-menu__top">
         <a href="/" class="header__brand" aria-label="MiniGames home">
-          ${renderLogo()}
+          <img class="header__logo-img" src="${logoWhite}" alt="MiniGames" />
         </a>
         <button type="button" class="mobile-menu__close" aria-label="Close menu">
           <span class="material-symbols-outlined" aria-hidden="true">close</span>
