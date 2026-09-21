@@ -4,12 +4,11 @@
 .header {
   position: relative;
   box-sizing: border-box;
+  width: 100%;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   gap: $space-3;
-  width: 100%;
   padding: $space-5 clamp($space-3, 4vw, $space-10);
   background: $color-bg-cream;
   border-bottom: $border-regular solid $color-primary-dark;
