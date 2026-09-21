@@ -90,6 +90,7 @@
 }
 
 .header__actions {
+  display: none;
   @include tablet-down {
     display: flex;
     gap: $space-3;
