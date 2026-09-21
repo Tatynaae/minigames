@@ -1,5 +1,6 @@
 import './leaderboard.scss';
 import leaderboardData from '../../data/leaderboard.json';
+import fireIcon from '../../assets/icons/fire-icon.svg';
 
 interface LeaderboardEntry {
   rank: number;
@@ -45,7 +46,9 @@ function renderRow(player: LeaderboardEntry, index: number): string {
       </td>
       <td><span class="leaderboard__games">${player.gamesPlayed}</span></td>
       <td><span class="leaderboard__score">${formatScore(player.totalScore)}</span></td>
-      <td><span class="leaderboard__streak">🔥 ${player.streakDays} days</span></td>
+      <td><span class="leaderboard__streak">
+      <img class="leaderboard__streak-icon" src="${fireIcon}" alt="" /> ${player.streakDays} days</span>
+      </td>
       <td><span class="leaderboard__game-tag">${player.favoriteGameName}</span></td>
     </tr>
   `;

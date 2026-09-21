@@ -204,6 +204,9 @@
 }
 
 .leaderboard__streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-weight: $font-weight-bold;
   font-size: $font-size-base;
   line-height: $line-height-base;
@@ -214,6 +217,12 @@
     font-size: $font-size-sm;
     line-height: $line-height-md - 6px;
   }
+}
+
+.leaderboard__streak-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .leaderboard__game-tag {
