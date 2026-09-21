@@ -105,6 +105,12 @@
   &:nth-child(even) {
     background: $color-white;
   }
+
+  &:nth-child(n + 4) {
+    @include mobile-down {
+      display: none;
+    }
+  }
 }
 
 .leaderboard__rank {
