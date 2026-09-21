@@ -65,7 +65,7 @@ export function createFooter(): HTMLElement {
       <div class="footer__nav-groups">
         ${renderNavGroup('Explore', EXPLORE_LINKS)}
         ${renderNavGroup('Company', COMPANY_LINKS)}
-        <div class="footer__nav-group">
+        <div class="footer__nav-group footer__nav-group--community">
           <h3 class="footer__nav-title">Community</h3>
           <ul class="footer__social-list">
             ${renderSocialLinks()}
@@ -78,17 +78,19 @@ export function createFooter(): HTMLElement {
       <hr class="footer__divider" />
       <div class="footer__meta">
         <p>&copy; 2026 MiniGames. All rights reserved.</p>
-        <a href="${RS_SCHOOL_COURSE_URL}" class="footer__rs-link" target="_blank" rel="noopener noreferrer">
-          <span class="footer__rs-badge" aria-hidden="true">RS</span>
-          <span>RS School</span>
-        </a>
-        <a href="${GITHUB_PROFILE_URL}" class="footer__github-link" target="_blank" rel="noopener noreferrer">
-          <span class="footer__github-badge" aria-hidden="true">
-            <span class="material-symbols-outlined" aria-hidden="true">code</span>
-          </span>
-          <span>@Tatynaae</span>
-        </a>
-        <p>Designed with love</p>
+        <div class="footer__credits">
+          <a href="${RS_SCHOOL_COURSE_URL}" class="footer__rs-link" target="_blank" rel="noopener noreferrer">
+              <span class="footer__rs-badge" aria-hidden="true">RS</span>
+              <span>RS School</span>
+          </a>
+          <a href="${GITHUB_PROFILE_URL}" class="footer__github-link" target="_blank" rel="noopener noreferrer">
+              <span class="footer__github-badge" aria-hidden="true">
+                <span class="material-symbols-outlined" aria-hidden="true">code</span>
+              </span>
+              <span>@Tatynaae</span>
+          </a>
+        </div>
+        <p class="footer__designed">Designed with love</p>
       </div>
     </div>
   `;

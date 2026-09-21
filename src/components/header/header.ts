@@ -1,4 +1,6 @@
 import './header.scss';
+import logo from '../../assets/icons/logo.svg';
+import logoWhite from '../../assets/icons/logo-white.svg';
 
 export const AUTH_OPEN_EVENT = 'auth:open';
 
@@ -12,14 +14,7 @@ const NAV_LINKS: { label: string; active?: boolean }[] = [
 ];
 
 function renderLogo(): string {
-  return `
-    <span class="header__logo" aria-hidden="true">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="30" height="30" rx="6" stroke="currentColor" stroke-width="2" />
-        <path d="M9 20V12L16 17L23 12V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </span>
-  `;
+  return `<img class="header__logo-img" src="${logo}" alt="MiniGames" />`;
 }
 
 function renderDesktopLinks(): string {
@@ -48,7 +43,6 @@ export function createHeader(): HTMLElement {
   header.innerHTML = `
     <a href="/" class="header__brand" aria-label="MiniGames home">
       ${renderLogo()}
-      <span class="header__wordmark">MiniGames</span>
     </a>
 
     <nav class="header__nav" aria-label="Primary">
@@ -61,21 +55,27 @@ export function createHeader(): HTMLElement {
       </div>
     </nav>
 
-    <button
-      type="button"
-      class="header__burger"
-      aria-label="Open menu"
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-    >
-      <span class="material-symbols-outlined" aria-hidden="true">menu</span>
-    </button>
+    <div class="header__actions">
+      <button type="button" class="btn btn--accent header__mobile-cta" data-auth-trigger="register">
+        Sign Up
+      </button>
+      <button
+        type="button"
+        class="header__burger"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+    </div>
+
+    <div class="mobile-menu-backdrop" data-mobile-menu-backdrop hidden></div>
 
     <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation" hidden>
       <div class="mobile-menu__top">
         <a href="/" class="header__brand" aria-label="MiniGames home">
-          ${renderLogo()}
-          <span class="header__wordmark">MiniGames</span>
+          <img class="header__logo-img" src="${logoWhite}" alt="MiniGames" />
         </a>
         <button type="button" class="mobile-menu__close" aria-label="Close menu">
           <span class="material-symbols-outlined" aria-hidden="true">close</span>
@@ -85,7 +85,7 @@ export function createHeader(): HTMLElement {
         ${renderMobileLinks()}
       </ul>
       <div class="mobile-menu__buttons">
-        <button type="button" class="btn btn--outline" data-auth-trigger="login">Log In</button>
+        <button type="button" class="btn btn--outline-light" data-auth-trigger="login">Log In</button>
         <button type="button" class="btn btn--accent" data-auth-trigger="register">Sign Up</button>
       </div>
     </div>
@@ -99,16 +99,19 @@ export function createHeader(): HTMLElement {
 function initHeaderBehavior(header: HTMLElement): void {
   const burger = header.querySelector<HTMLButtonElement>('.header__burger');
   const mobileMenu = header.querySelector<HTMLElement>('.mobile-menu');
+  const backdrop = header.querySelector<HTMLElement>('[data-mobile-menu-backdrop]');
   const closeButton = header.querySelector<HTMLButtonElement>('.mobile-menu__close');
 
-  if (!burger || !mobileMenu || !closeButton) {
+  if (!burger || !mobileMenu || !backdrop || !closeButton) {
     return;
   }
 
   const openMobileMenu = (): void => {
     mobileMenu.hidden = false;
+    backdrop.hidden = false;
     requestAnimationFrame(() => {
       mobileMenu.classList.add('is-open');
+      backdrop.classList.add('is-open');
     });
     burger.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
@@ -116,10 +119,12 @@ function initHeaderBehavior(header: HTMLElement): void {
 
   const closeMobileMenu = (): void => {
     mobileMenu.classList.remove('is-open');
+    backdrop.classList.remove('is-open');
     burger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
     const onTransitionEnd = (): void => {
       mobileMenu.hidden = true;
+      backdrop.hidden = true;
       mobileMenu.removeEventListener('transitionend', onTransitionEnd);
     };
     mobileMenu.addEventListener('transitionend', onTransitionEnd);
@@ -127,6 +132,7 @@ function initHeaderBehavior(header: HTMLElement): void {
 
   burger.addEventListener('click', openMobileMenu);
   closeButton.addEventListener('click', closeMobileMenu);
+  backdrop.addEventListener('click', closeMobileMenu);
 
   document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === 'Escape' && !mobileMenu.hidden) {
