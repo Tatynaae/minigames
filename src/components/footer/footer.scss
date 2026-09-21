@@ -91,7 +91,7 @@
   flex-wrap: wrap;
   gap: $space-8 $space-10;
 
-  @include tablet-down {
+  @include mobile-down {
     gap: $space-5 $space-7;
   }
 }
@@ -101,13 +101,13 @@
   flex-direction: column;
   gap: $space-3;
 
-  @include tablet-down {
+  @include mobile-down {
     flex: 1 1 auto;
   }
 }
 
 .footer__nav-group--community {
-  @include tablet-down {
+  @include mobile-down {
     flex-basis: 100%;
   }
 }
