@@ -262,8 +262,16 @@
   background: $color-white;
   border-radius: $radius-full;
 
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+
   @include mobile-down {
     width: 20px;
     height: 20px;
+
+    .material-symbols-outlined {
+      font-size: 14px;
+    }
   }
 }
