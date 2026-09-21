@@ -1,4 +1,5 @@
 import './footer.scss';
+import logoWhite from '../../assets/icons/logo-white.svg';
 
 const GITHUB_PROFILE_URL = 'https://github.com/Tatynaae';
 const RS_SCHOOL_COURSE_URL = 'https://rs.school/courses/short-track';
@@ -6,17 +7,6 @@ const RS_SCHOOL_COURSE_URL = 'https://rs.school/courses/short-track';
 const EXPLORE_LINKS = ['Home', 'Library', 'Categories', 'Tournaments'];
 const COMPANY_LINKS = ['About Us', 'Contact', 'Privacy Policy', 'Terms of Service'];
 const SOCIAL_ICONS = ['share', 'chat', 'rss_feed'];
-
-function renderLogo(): string {
-  return `
-    <span class="footer__logo" aria-hidden="true">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="30" height="30" rx="6" stroke="currentColor" stroke-width="2" />
-        <path d="M9 20V12L16 17L23 12V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </span>
-  `;
-}
 
 function renderNavGroup(title: string, links: string[]): string {
   return `
@@ -53,10 +43,9 @@ export function createFooter(): HTMLElement {
   footer.innerHTML = `
     <div class="footer__top">
       <div class="footer__about">
-        <div class="footer__logo-row">
-          ${renderLogo()}
-          <span class="footer__wordmark">MiniGames</span>
-        </div>
+        <a href="/" class="header__brand" aria-label="MiniGames home">
+          <img class="header__logo-img" src="${logoWhite}" alt="MiniGames" />
+        </a>
         <p class="footer__description">
           Take a short break and have fun. Hundreds of curated casual mini-games right in your web browser. No download required.
         </p>
