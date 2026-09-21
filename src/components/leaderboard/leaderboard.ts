@@ -51,8 +51,15 @@ function renderRow(player: LeaderboardEntry, index: number): string {
   `;
 }
 
+function getMaxVisiblePlayers(): number {
+  const width = window.innerWidth;
+  if (width <= 768) return 3;
+  return 5;
+}
+
 export function createLeaderboard(): HTMLElement {
-  const players = leaderboardData.data as LeaderboardEntry[];
+  const maxVisible = getMaxVisiblePlayers();
+  const players = (leaderboardData.data as LeaderboardEntry[]).slice(0, maxVisible);
 
   const section = document.createElement('section');
   section.className = 'players-section';
