@@ -1,0 +1,239 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.players-section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-7;
+  width: 100%;
+  padding: $space-7 clamp($space-3, 6vw, $space-11);
+
+  @include tablet-down {
+    gap: $space-5;
+    padding: $space-5 $space-7;
+  }
+
+  @include mobile-down {
+    gap: $space-3;
+    padding: $space-3;
+  }
+}
+
+.leaderboard-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: $border-medium solid $color-primary-dark;
+  border-radius: $radius-md-lg;
+  box-shadow: $shadow-card-lg;
+
+  @include tablet-down {
+    box-shadow: $shadow-card-sm;
+  }
+}
+
+.leaderboard {
+  width: 100%;
+  min-width: $size-leaderboard-min;
+  background: $color-white;
+  border-collapse: collapse;
+  font-family: $font-family-secondary;
+
+  @include mobile-down {
+    min-width: 0;
+  }
+}
+
+.leaderboard thead tr {
+  background: $color-icon-blue;
+  border-bottom: $border-thin-plus solid $color-primary-dark;
+}
+
+.leaderboard th {
+  box-sizing: border-box;
+  padding: $space-5;
+  font-weight: $font-weight-black;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  text-align: center;
+  text-transform: uppercase;
+  color: $color-white;
+  white-space: nowrap;
+
+  @include tablet-down {
+    padding: $space-3;
+    font-size: $font-size-sm;
+    line-height: $line-height-compact;
+  }
+}
+
+.leaderboard th:nth-child(2) {
+  text-align: left;
+}
+
+.leaderboard th:nth-child(6),
+.leaderboard td:nth-child(6) {
+  @include tablet-down {
+    display: none;
+  }
+}
+
+.leaderboard th:nth-child(3),
+.leaderboard td:nth-child(3) {
+  @include mobile-down {
+    display: none;
+  }
+}
+
+.leaderboard td {
+  box-sizing: border-box;
+  padding: $space-3 $space-5;
+  text-align: center;
+  vertical-align: middle;
+
+  @include tablet-down {
+    padding: $space-3;
+  }
+}
+
+.leaderboard tbody tr {
+  border-bottom: $border-thin solid $color-border-light;
+
+  &:nth-child(odd) {
+    background: $color-bg-cream;
+  }
+
+  &:nth-child(even) {
+    background: $color-white;
+  }
+
+  &:nth-child(n + 4) {
+    @include mobile-down {
+      display: none;
+    }
+  }
+}
+
+.leaderboard__rank {
+  font-weight: $font-weight-black;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+
+  @include tablet-down {
+    font-size: $font-size-sm;
+    line-height: $line-height-compact;
+  }
+}
+
+.leaderboard tbody tr:first-child .leaderboard__rank {
+  color: $color-accent-yellow;
+}
+
+.leaderboard__player {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-3;
+  text-align: left;
+
+  @include tablet-down {
+    gap: $space-2;
+  }
+}
+
+.leaderboard__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $size-xl;
+  height: $size-xl;
+  flex: none;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  color: $color-primary-dark;
+  border: $border-thin-plus solid $color-primary-dark;
+  border-radius: $radius-full;
+
+  @include tablet-down {
+    width: $size-md-lg;
+    height: $size-md-lg;
+    font-size: $font-size-2xs;
+  }
+
+  @include mobile-down {
+    width: $size-md;
+    height: $size-md;
+  }
+}
+
+.leaderboard__name {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+  white-space: nowrap;
+
+  @include tablet-down {
+    font-size: $font-size-sm;
+    line-height: $line-height-compact;
+  }
+}
+
+.leaderboard__games {
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+
+  @include tablet-down {
+    font-size: $font-size-sm;
+    line-height: $line-height-compact;
+  }
+}
+
+.leaderboard__score {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+
+  @include tablet-down {
+    font-size: $font-size-sm;
+    line-height: $line-height-compact;
+  }
+}
+
+.leaderboard__streak {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-primary-dark;
+  white-space: nowrap;
+
+  @include tablet-down {
+    font-size: $font-size-sm;
+    line-height: $line-height-compact;
+  }
+}
+
+.leaderboard__streak-icon {
+  width: $size-xs;
+  height: $size-xs;
+  flex-shrink: 0;
+}
+
+.leaderboard__game-tag {
+  display: inline-flex;
+  padding: $space-1 $space-3;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-xs;
+  line-height: $line-height-xs;
+  color: $color-primary-dark;
+  white-space: nowrap;
+  background: $color-bg-cream;
+  border: $border-thin-plus solid $color-primary-dark;
+  border-radius: $radius-full;
+}

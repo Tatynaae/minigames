@@ -1,0 +1,148 @@
+// Colors
+$color-bg-cream: #f9f8f3;
+$color-primary-dark: #242145;
+$color-text-muted: #5f5d75;
+$color-text-muted-light: #b9b5c9;
+$color-white: #ffffff;
+$color-accent-yellow: #ffd02b;
+$color-bg-dark: #1e1b3a;
+$color-bg-dark-secondary: #2a264f;
+$color-icon-blue: #3a2ebf;
+$color-google-red: #ea4335;
+$color-shadow-dark: #111111;
+$color-backdrop: rgba($color-bg-dark, 0.6);
+$color-text-muted-dark: #737380;
+$color-border-light: #e5e7eb;
+$color-favorite-red: #ff4b4b;
+$color-avatar-mint: #a3e2c9;
+$color-avatar-sky: #bce3ff;
+$color-avatar-pink: #ffc6ff;
+$color-avatar-lavender: #e8dff5;
+$color-black: #000000;
+$color-overlay-start: rgba($color-black, 0);
+$color-overlay-mid: rgba($color-black, 0.4);
+$color-overlay-end: rgba($color-black, 0.85);
+
+// Spacing
+$space-1: 4px;
+$space-2: 8px;
+$space-2-5: 10px;
+$space-3: 16px;
+$space-4: 20px;
+$space-5: 24px;
+$space-6: 32px;
+$space-7: 40px;
+$space-8: 48px;
+$space-9: 64px;
+$space-10: 80px;
+$space-9-5: 72px;
+$space-11: 120px;
+$space-12: 112px;
+
+// Border
+$border-thin: 1px;
+$border-thin-plus: 1.5px;
+$border-regular: 2px;
+$border-medium: 2.5px;
+$border-thick: 3px;
+
+// Corner
+$radius-xs: 2px;
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-md-lg: 16px;
+$radius-lg: 24px;
+$radius-full: 9999px;
+
+// Shadows
+$shadow-dialog: 8px 8px 0 $color-shadow-dark;
+$shadow-button: 0 4px 0 $color-primary-dark;
+$shadow-card-sm: 4px 4px 0 $color-primary-dark;
+$shadow-card-lg: 6px 6px 0 $color-primary-dark;
+$shadow-card-xl: 8px 8px 0 $color-primary-dark;
+$shadow-cta-card:
+  0 2px 8px -4px rgba($color-black, 0.04),
+  0 14px 30px -10px rgba($color-black, 0.08);
+$shadow-cta-button: 0 10px 20px -10px rgba($color-black, 0.1);
+
+// Sizes
+$size-hairline: 1px;
+$size-2xs: 8px;
+$size-xs: 16px;
+$size-sm: 20px;
+$size-md: 24px;
+$size-md-lg: 28px;
+$size-lg: 32px;
+$size-xl: 40px;
+$size-2xl: 48px;
+$size-3xl: 56px;
+
+// Layout sizes
+$size-header-brand: 150px;
+$size-dialog-width: 420px;
+$size-footer-about: 400px;
+$size-hero-card: 640px;
+$size-hero-card-tablet: 480px;
+$size-leaderboard-min: 600px;
+$size-cta-illustration-width: 680px;
+$size-cta-illustration-height: 480px;
+$size-cta-illustration-height-tablet: 300px;
+$size-cta-illustration-height-mobile: 227px;
+$size-cta-card-max-height: 344px;
+$size-game-card-height: 384px;
+$size-game-card-height-tablet: 280px;
+$size-game-card-height-mobile: 200px;
+$size-game-card-collapsed: 120px;
+$size-game-card-featured-mobile: 218px;
+
+// Button sizes
+$button-height-xs: 31px;
+$button-height-sm: 32px;
+$button-height-sm-plus: 33px;
+$button-height-md: 37px;
+$button-height-lg: 50px;
+$button-height-xl: 52px;
+$button-height-2xl: 54px;
+$button-height-3xl: 56px;
+
+// Typography
+$font-family-base: 'Inter', sans-serif;
+$font-family-secondary: 'Roboto', sans-serif;
+$font-family-icon: 'Material Symbols Outlined';
+
+$font-size-2xs: 10px;
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-md: 18px;
+$font-size-md-lg: 20px;
+$font-size-lg: 24px;
+$font-size-xl: 32px;
+$font-size-xl-lg: 36px;
+$font-size-xxl: 56px;
+
+$line-height-xs: 15px;
+$line-height-sm: 17px;
+$line-height-compact: 16px;
+$line-height-base: 19px;
+$line-height-md: 22px;
+$line-height-md-lg: 24px;
+$line-height-lg: 29px;
+$line-height-xl: 39px;
+$line-height-relaxed: 150%;
+$line-height-tight: 110%;
+$line-height-comfortable: 115%;
+$line-height-snug: 120%;
+$line-height-loose: 140%;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-black: 800;
+
+// Breakpoints
+$breakpoint-mobile: 375px;
+$breakpoint-mobile-max: 599px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1920px;
