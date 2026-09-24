@@ -66,15 +66,15 @@ a {
 }
 
 .section-header__bar {
-  width: 8px;
-  height: 32px;
+  width: $size-2xs;
+  height: $size-lg;
   flex: none;
   background: $color-accent-yellow;
-  border: 1.5px solid $color-primary-dark;
-  border-radius: $border-regular;
+  border: $border-thin-plus solid $color-primary-dark;
+  border-radius: $radius-xs;
 
   @include mixins.tablet-down {
-    height: 24px;
+    height: $size-md;
   }
 }
 

@@ -38,8 +38,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: $size-2xl;
+  height: $size-2xl;
   flex: none;
   color: $color-primary-dark;
   background: $color-white;
@@ -55,11 +55,11 @@
   }
 
   @include tablet-down {
-    width: 40px;
-    height: 40px;
+    width: $size-xl;
+    height: $size-xl;
 
     .material-symbols-outlined {
-      font-size: $font-size-lg - 6px;
+      font-size: $font-size-md;
     }
   }
 }
@@ -82,7 +82,7 @@
   position: relative;
   box-sizing: border-box;
   flex: 1 0 0;
-  height: 384px;
+  height: $size-game-card-height;
   overflow: hidden;
   background: $color-white;
   border: $border-medium solid $color-primary-dark;
@@ -97,7 +97,7 @@
   }
 
   &.game-card--collapsed {
-    flex: 0 0 120px;
+    flex: 0 0 $size-game-card-collapsed;
     isolation: isolate;
 
     @include tablet-down {
@@ -113,21 +113,21 @@
     }
 
     @include mobile-down {
-      width: 218px;
+      width: $size-game-card-featured-mobile;
     }
   }
 
   @include tablet-down {
     flex: 1 1 0;
     min-width: 0;
-    height: 280px;
+    height: $size-game-card-height-tablet;
     border-radius: $radius-md;
   }
 
   @include mobile-down {
-    width: 56px;
-    min-width: 56px;
-    height: 200px;
+    width: $size-3xl;
+    min-width: $size-3xl;
+    height: $size-game-card-height-mobile;
   }
 }
 
@@ -159,9 +159,9 @@
   padding: $space-3;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.4) 17.31%,
-    rgba(0, 0, 0, 0.85) 46.15%
+    $color-overlay-start 0%,
+    $color-overlay-mid 17.31%,
+    $color-overlay-end 46.15%
   );
   opacity: 1;
   transition: opacity 0.2s ease;

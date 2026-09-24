@@ -31,12 +31,12 @@
   flex: none;
 
   @include tablet-down {
-    width: 150px;
+    width: $size-header-brand;
   }
 }
 
 .header__logo-img {
-  height: 32px;
+  height: $size-lg;
   width: auto;
   flex: none;
 
@@ -104,7 +104,7 @@
   @include tablet-down {
     display: inline-flex;
     padding: $space-2 $space-3;
-    height: 33px;
+    height: $button-height-sm-plus;
   }
 
   @include mobile-down {
@@ -117,8 +117,8 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 32px;
-  height: 32px;
+  width: $size-lg;
+  height: $size-lg;
   padding: $space-2;
   color: $color-icon-blue;
   background: $color-white;
@@ -188,8 +188,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: $size-lg;
+  height: $size-lg;
   padding: $space-2;
   color: $color-white;
   background: $color-bg-dark-secondary;

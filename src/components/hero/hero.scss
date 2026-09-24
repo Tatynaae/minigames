@@ -41,7 +41,7 @@
   align-items: flex-start;
   gap: $space-5;
   width: 100%;
-  max-width: 640px;
+  max-width: $size-hero-card;
   padding: $space-8;
   background: $color-bg-cream;
   border: $border-thick solid $color-primary-dark;
@@ -49,7 +49,7 @@
   box-shadow: $shadow-card-xl;
 
   @include tablet-down {
-    max-width: 480px;
+    max-width: $size-hero-card-tablet;
     padding: $space-5;
     gap: $space-3;
     border-width: $border-medium;
@@ -71,7 +71,7 @@
   color: $color-primary-dark;
 
   @include tablet-down {
-    font-size: $font-size-xl + 4px;
+    font-size: $font-size-xl-lg;
     line-height: $line-height-comfortable;
   }
 
