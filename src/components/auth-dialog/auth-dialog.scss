@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   margin: auto;
-  width: min(420px, calc(100vw - #{$space-3 * 2}));
+  width: min(#{$size-dialog-width}, calc(100vw - #{$space-3 * 2}));
   height: fit-content;
   max-height: calc(100vh - #{$space-6 * 2});
   padding: 0;
@@ -68,7 +68,7 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 48px;
+  height: $size-2xl;
   background: $color-white;
   border: $border-medium solid $color-primary-dark;
   border-radius: $radius-md;
@@ -154,7 +154,7 @@
   align-items: center;
   gap: $space-3;
   padding: 0 $space-3;
-  height: 48px;
+  height: $size-2xl;
   background: $color-white;
   border: $border-regular solid $color-primary-dark;
   border-radius: $radius-sm;
@@ -238,8 +238,8 @@
 
 .auth-form__google-icon {
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: $size-md;
+  height: $size-md;
   flex: none;
 }
 

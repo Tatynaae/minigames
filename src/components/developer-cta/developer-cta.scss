@@ -25,9 +25,9 @@
 }
 
 .developer-cta__illustration {
-  flex: 1 1 680px;
-  max-width: 680px;
-  height: 480px;
+  flex: 1 1 $size-cta-illustration-width;
+  max-width: $size-cta-illustration-width;
+  height: $size-cta-illustration-height;
   background-image: var(--developer-illustration);
   background-repeat: no-repeat;
   background-position: center;
@@ -39,14 +39,14 @@
     flex: none;
     align-self: stretch;
     max-width: none;
-    height: 300px;
+    height: $size-cta-illustration-height-tablet;
     transform: none;
     width: 100%;
     background-size: cover;
   }
 
   @include mobile-down {
-    height: 227px;
+    height: $size-cta-illustration-height-mobile;
   }
 }
 
@@ -62,7 +62,7 @@
   border: $border-regular solid $color-primary-dark;
   border-radius: $radius-lg;
   box-shadow: $shadow-cta-card;
-  max-height: 344px;
+  max-height: $size-cta-card-max-height;
 
   @include tablet-down {
     align-self: stretch;

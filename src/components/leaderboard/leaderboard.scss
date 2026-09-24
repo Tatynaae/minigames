@@ -33,7 +33,7 @@
 
 .leaderboard {
   width: 100%;
-  min-width: 600px;
+  min-width: $size-leaderboard-min;
   background: $color-white;
   border-collapse: collapse;
   font-family: $font-family-secondary;
@@ -45,7 +45,7 @@
 
 .leaderboard thead tr {
   background: $color-icon-blue;
-  border-bottom: 1.5px solid $color-primary-dark;
+  border-bottom: $border-thin-plus solid $color-primary-dark;
 }
 
 .leaderboard th {
@@ -62,7 +62,7 @@
   @include tablet-down {
     padding: $space-3;
     font-size: $font-size-sm;
-    line-height: $line-height-md - 6px;
+    line-height: $line-height-compact;
   }
 }
 
@@ -121,7 +121,7 @@
 
   @include tablet-down {
     font-size: $font-size-sm;
-    line-height: $line-height-md - 6px;
+    line-height: $line-height-compact;
   }
 }
 
@@ -145,24 +145,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: $size-xl;
+  height: $size-xl;
   flex: none;
   font-weight: $font-weight-bold;
   font-size: $font-size-sm;
   color: $color-primary-dark;
-  border: 1.5px solid $color-primary-dark;
+  border: $border-thin-plus solid $color-primary-dark;
   border-radius: $radius-full;
 
   @include tablet-down {
-    width: 28px;
-    height: 28px;
-    font-size: $font-size-xs - 2px;
+    width: $size-md-lg;
+    height: $size-md-lg;
+    font-size: $font-size-2xs;
   }
 
   @include mobile-down {
-    width: 24px;
-    height: 24px;
+    width: $size-md;
+    height: $size-md;
   }
 }
 
@@ -175,7 +175,7 @@
 
   @include tablet-down {
     font-size: $font-size-sm;
-    line-height: $line-height-md - 6px;
+    line-height: $line-height-compact;
   }
 }
 
@@ -187,7 +187,7 @@
 
   @include tablet-down {
     font-size: $font-size-sm;
-    line-height: $line-height-md - 6px;
+    line-height: $line-height-compact;
   }
 }
 
@@ -199,14 +199,14 @@
 
   @include tablet-down {
     font-size: $font-size-sm;
-    line-height: $line-height-md - 6px;
+    line-height: $line-height-compact;
   }
 }
 
 .leaderboard__streak {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: $space-1;
   font-weight: $font-weight-bold;
   font-size: $font-size-base;
   line-height: $line-height-base;
@@ -215,13 +215,13 @@
 
   @include tablet-down {
     font-size: $font-size-sm;
-    line-height: $line-height-md - 6px;
+    line-height: $line-height-compact;
   }
 }
 
 .leaderboard__streak-icon {
-  width: 16px;
-  height: 16px;
+  width: $size-xs;
+  height: $size-xs;
   flex-shrink: 0;
 }
 
@@ -234,6 +234,6 @@
   color: $color-primary-dark;
   white-space: nowrap;
   background: $color-bg-cream;
-  border: 1.5px solid $color-primary-dark;
+  border: $border-thin-plus solid $color-primary-dark;
   border-radius: $radius-full;
 }
