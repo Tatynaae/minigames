@@ -38,6 +38,7 @@ $color-overlay-mid: rgba($color-black, 0.4);
 $color-overlay-end: rgba($color-black, 0.85);
 
 // Spacing
+$space-0-5: 2px;
 $space-1: 4px;
 $space-2: 8px;
 $space-2-5: 10px;
@@ -113,6 +114,13 @@ $size-game-card-height-tablet: 280px;
 $size-game-card-height-mobile: 200px;
 $size-game-card-collapsed: 120px;
 $size-game-card-featured-mobile: 218px;
+$size-library-card-min: 600px;
+$size-library-card-height: 200px;
+$size-library-card-height-tablet: 152px;
+$size-library-card-image: 320px;
+$size-library-card-image-tablet: 270px;
+$size-library-card-image-mobile: 160px;
+$size-dropdown-width: 200px;
 
 // Button sizes
 $button-height-xs: 31px;
