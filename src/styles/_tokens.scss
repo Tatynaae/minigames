@@ -19,6 +19,20 @@ $color-avatar-sky: #bce3ff;
 $color-avatar-pink: #ffc6ff;
 $color-avatar-lavender: #e8dff5;
 $color-black: #000000;
+$color-bg-dark-hover: #3c376e; // social-link hover, close/share button hover
+$color-bg-hover: #fff9e5; // outline button, chip, burger, pagination hover
+$color-bg-input-focus: #fffcf5;
+$color-bg-disabled: #f5f5f5;
+$color-accent-yellow-light: #fde047; // sort action, selected dropdown item
+$color-accent-yellow-dark: #e5bb00; // yellow button hover
+$color-badge-bg: #f0eeff;
+$color-error: #b3261e;
+$color-price: #0b8a8f;
+$color-border-muted: #d2d2d2; // disabled borders, favorite button border
+$color-avatar-bg: #e9eef6;
+$color-text-placeholder: #969696;
+$color-scrollbar-track: #ebebeb;
+$color-scrollbar-thumb: #a0a0a0;
 $color-overlay-start: rgba($color-black, 0);
 $color-overlay-mid: rgba($color-black, 0.4);
 $color-overlay-end: rgba($color-black, 0.85);
@@ -51,6 +65,7 @@ $radius-xs: 2px;
 $radius-sm: 8px;
 $radius-md: 12px;
 $radius-md-lg: 16px;
+$radius-xl: 20px;
 $radius-lg: 24px;
 $radius-full: 9999px;
 
@@ -60,6 +75,9 @@ $shadow-button: 0 4px 0 $color-primary-dark;
 $shadow-card-sm: 4px 4px 0 $color-primary-dark;
 $shadow-card-lg: 6px 6px 0 $color-primary-dark;
 $shadow-card-xl: 8px 8px 0 $color-primary-dark;
+$shadow-offset-sm: 2px 2px 0 $color-shadow-dark;
+$shadow-offset-md: 4px 4px 0 $color-shadow-dark;
+$shadow-dropdown: 4px 4px 0 $color-black;
 $shadow-cta-card:
   0 2px 8px -4px rgba($color-black, 0.04),
   0 14px 30px -10px rgba($color-black, 0.08);
@@ -73,6 +91,7 @@ $size-sm: 20px;
 $size-md: 24px;
 $size-md-lg: 28px;
 $size-lg: 32px;
+$size-lg-plus: 36px;
 $size-xl: 40px;
 $size-2xl: 48px;
 $size-3xl: 56px;
@@ -121,6 +140,7 @@ $font-size-xl: 32px;
 $font-size-xl-lg: 36px;
 $font-size-xxl: 56px;
 
+$line-height-2xs: 12px;
 $line-height-xs: 15px;
 $line-height-sm: 17px;
 $line-height-compact: 16px;
@@ -129,6 +149,8 @@ $line-height-md: 22px;
 $line-height-md-lg: 24px;
 $line-height-lg: 29px;
 $line-height-xl: 39px;
+$line-height-xl-lg: 44px;
+$line-height-xxl: 66px;
 $line-height-relaxed: 150%;
 $line-height-tight: 110%;
 $line-height-comfortable: 115%;
