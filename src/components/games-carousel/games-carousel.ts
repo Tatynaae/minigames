@@ -1,28 +1,7 @@
 import './games-carousel.scss';
-import gamesSeed from '../../data/games-seed.json';
-import tailsideCard from '../../assets/images/tailside-cozy-cafe-sim-card.jpg';
-import islandersCard from '../../assets/images/islanders-new-shores-card.jpg';
-import vacationCard from '../../assets/images/vacation-cafe-simulator-card.jpg';
-import winterBurrowCard from '../../assets/images/winter-burrow-card.jpg';
-import shelvePotionsCard from '../../assets/images/shelve-the-potions-card.jpg';
-import heartopiaCard from '../../assets/images/heartopia-card.jpg';
-import paliaCard from '../../assets/images/palia-card.jpg';
-import catMailCoCard from '../../assets/images/cat-mail-co-card.jpg';
-import tinyGladeCard from '../../assets/images/tiny-glade-card.jpg';
+import { GAMES, formatLikes } from '../../data/games';
 
 type CardSize = 'hidden' | 'collapsed' | 'regular' | 'featured';
-
-interface GameSeedEntry {
-  slug: string;
-  name: string;
-  category: string;
-  price: string;
-  shortDescription: string;
-  rating: number;
-  likesCount: number;
-  cardImage: string;
-  featured: boolean;
-}
 
 interface GameCardData {
   slug: string;
@@ -32,32 +11,14 @@ interface GameCardData {
   likes: string;
 }
 
-const CARD_IMAGES: Record<string, string> = {
-  'tailside-cozy-cafe-sim': tailsideCard,
-  'islanders-new-shores': islandersCard,
-  'vacation-cafe-simulator': vacationCard,
-  'winter-burrow': winterBurrowCard,
-  'shelve-the-potions': shelvePotionsCard,
-  heartopia: heartopiaCard,
-  palia: paliaCard,
-  'cat-mail-co': catMailCoCard,
-  'tiny-glade': tinyGladeCard,
-};
-
-function formatLikes(count: number): string {
-  return count >= 1000 ? `${(count / 1000).toFixed(1)}K` : String(count);
-}
-
 function getFeaturedGames(): GameCardData[] {
-  return (gamesSeed.data as GameSeedEntry[])
-    .filter((game) => game.featured && CARD_IMAGES[game.slug])
-    .map((game) => ({
-      slug: game.slug,
-      image: CARD_IMAGES[game.slug],
-      name: game.name,
-      rating: game.rating.toFixed(1),
-      likes: formatLikes(game.likesCount),
-    }));
+  return GAMES.filter((game) => game.featured).map((game) => ({
+    slug: game.slug,
+    image: game.image,
+    name: game.name,
+    rating: game.rating.toFixed(1),
+    likes: formatLikes(game.likesCount),
+  }));
 }
 
 const INITIAL_FEATURED_INDEX = 0;

@@ -6,14 +6,31 @@ import { createLeaderboard } from '../components/leaderboard/leaderboard';
 import { createDeveloperCta } from '../components/developer-cta/developer-cta';
 import { createFooter } from '../components/footer/footer';
 import { createAuthDialog } from '../components/auth-dialog/auth-dialog';
+import { createLibrary } from '../components/library/library';
+import { getCurrentRoute, type Route } from './router';
 
 const app = document.getElementById('app');
 
 if (app) {
   const main = document.createElement('main');
   main.className = 'main';
-  main.append(createHero(), createGamesCarousel(), createLeaderboard(), createDeveloperCta());
+
+  const pages: Partial<Record<Route, HTMLElement[]>> = {};
+  const buildPage = (route: Route): HTMLElement[] =>
+    route === 'library'
+      ? [createLibrary()]
+      : [createHero(), createGamesCarousel(), createLeaderboard(), createDeveloperCta()];
+
+  const renderRoute = (): void => {
+    const route = getCurrentRoute();
+    pages[route] ??= buildPage(route);
+    main.replaceChildren(...pages[route]);
+    window.scrollTo(0, 0);
+  };
 
   app.append(createHeader(), main, createFooter());
   document.body.append(createAuthDialog());
+
+  window.addEventListener('hashchange', renderRoute);
+  renderRoute();
 }
