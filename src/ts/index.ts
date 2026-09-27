@@ -6,6 +6,7 @@ import { createLeaderboard } from '../components/leaderboard/leaderboard';
 import { createDeveloperCta } from '../components/developer-cta/developer-cta';
 import { createFooter } from '../components/footer/footer';
 import { createAuthDialog } from '../components/auth-dialog/auth-dialog';
+import { createGameDetail } from '../components/game-detail/game-detail';
 import { createLibrary } from '../components/library/library';
 import { getCurrentRoute, type Route } from './router';
 
@@ -30,6 +31,7 @@ if (app) {
 
   app.append(createHeader(), main, createFooter());
   document.body.append(createAuthDialog());
+  document.body.append(createGameDetail());
 
   window.addEventListener('hashchange', renderRoute);
   renderRoute();
