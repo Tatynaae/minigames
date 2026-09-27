@@ -1,28 +1,8 @@
 import './games-carousel.scss';
-import gamesSeed from '../../data/games-seed.json';
-import tailsideCard from '../../assets/images/tailside-cozy-cafe-sim-card.jpg';
-import islandersCard from '../../assets/images/islanders-new-shores-card.jpg';
-import vacationCard from '../../assets/images/vacation-cafe-simulator-card.jpg';
-import winterBurrowCard from '../../assets/images/winter-burrow-card.jpg';
-import shelvePotionsCard from '../../assets/images/shelve-the-potions-card.jpg';
-import heartopiaCard from '../../assets/images/heartopia-card.jpg';
-import paliaCard from '../../assets/images/palia-card.jpg';
-import catMailCoCard from '../../assets/images/cat-mail-co-card.jpg';
-import tinyGladeCard from '../../assets/images/tiny-glade-card.jpg';
+import { GAMES, formatLikes } from '../../data/games';
+import { GAME_DETAIL_OPEN_EVENT } from '../game-detail/game-detail';
 
 type CardSize = 'hidden' | 'collapsed' | 'regular' | 'featured';
-
-interface GameSeedEntry {
-  slug: string;
-  name: string;
-  category: string;
-  price: string;
-  shortDescription: string;
-  rating: number;
-  likesCount: number;
-  cardImage: string;
-  featured: boolean;
-}
 
 interface GameCardData {
   slug: string;
@@ -32,32 +12,14 @@ interface GameCardData {
   likes: string;
 }
 
-const CARD_IMAGES: Record<string, string> = {
-  'tailside-cozy-cafe-sim': tailsideCard,
-  'islanders-new-shores': islandersCard,
-  'vacation-cafe-simulator': vacationCard,
-  'winter-burrow': winterBurrowCard,
-  'shelve-the-potions': shelvePotionsCard,
-  heartopia: heartopiaCard,
-  palia: paliaCard,
-  'cat-mail-co': catMailCoCard,
-  'tiny-glade': tinyGladeCard,
-};
-
-function formatLikes(count: number): string {
-  return count >= 1000 ? `${(count / 1000).toFixed(1)}K` : String(count);
-}
-
 function getFeaturedGames(): GameCardData[] {
-  return (gamesSeed.data as GameSeedEntry[])
-    .filter((game) => game.featured && CARD_IMAGES[game.slug])
-    .map((game) => ({
-      slug: game.slug,
-      image: CARD_IMAGES[game.slug],
-      name: game.name,
-      rating: game.rating.toFixed(1),
-      likes: formatLikes(game.likesCount),
-    }));
+  return GAMES.filter((game) => game.featured).map((game) => ({
+    slug: game.slug,
+    image: game.image,
+    name: game.name,
+    rating: game.rating.toFixed(1),
+    likes: formatLikes(game.likesCount),
+  }));
 }
 
 const INITIAL_FEATURED_INDEX = 0;
@@ -71,8 +33,8 @@ function sizeForDistance(distance: number): CardSize {
 
 function renderGameCard(game: GameCardData): string {
   return `
-    <li class="game-card" data-card>
-      <button type="button" class="game-card__trigger" data-card-trigger aria-label="Feature ${game.name}">
+    <li class="game-card" data-card data-slug="${game.slug}">
+      <button type="button" class="game-card__trigger" data-card-trigger aria-label="View ${game.name} details">
         <img class="game-card__image" src="${game.image}" alt="${game.name}" loading="lazy" />
         <div class="game-card__overlay">
           <p class="game-card__title">${game.name}</p>
@@ -124,8 +86,13 @@ export function createGamesCarousel(): HTMLElement {
   return section;
 }
 
+const AUTOPLAY_INTERVAL = 4000;
+const SWIPE_THRESHOLD = 50;
+const OVERLAY_MIN_WIDTH = 288;
+
 function initCarouselBehavior(section: HTMLElement): void {
   const cards = Array.from(section.querySelectorAll<HTMLLIElement>('[data-card]'));
+  const track = section.querySelector<HTMLUListElement>('.carousel-track');
   const prevButton = section.querySelector<HTMLButtonElement>('[data-carousel-prev]');
   const nextButton = section.querySelector<HTMLButtonElement>('[data-carousel-next]');
 
@@ -146,23 +113,143 @@ function initCarouselBehavior(section: HTMLElement): void {
     });
   };
 
-  prevButton?.addEventListener('click', () => {
-    featuredIndex = (featuredIndex - 1 + cards.length) % cards.length;
+  let autoplayTimer: ReturnType<typeof setTimeout> | null = null;
+  let autoplayStartTime = 0;
+  let autoplayRemaining = AUTOPLAY_INTERVAL;
+
+  function clearAutoplayTimer(): void {
+    if (autoplayTimer !== null) {
+      clearTimeout(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+
+  function autoplayTick(): void {
+    featuredIndex = (featuredIndex + 1) % total;
     applySizes();
+    startAutoplay();
+  }
+
+  function startAutoplay(): void {
+    clearAutoplayTimer();
+    autoplayRemaining = AUTOPLAY_INTERVAL;
+    autoplayStartTime = Date.now();
+    autoplayTimer = setTimeout(autoplayTick, AUTOPLAY_INTERVAL);
+  }
+
+  function pauseAutoplay(): void {
+    if (autoplayTimer === null) return;
+    clearAutoplayTimer();
+    autoplayRemaining -= Date.now() - autoplayStartTime;
+    if (autoplayRemaining < 0) autoplayRemaining = 0;
+  }
+
+  function resumeAutoplay(): void {
+    if (autoplayTimer !== null) return;
+    autoplayStartTime = Date.now();
+    autoplayTimer = setTimeout(autoplayTick, autoplayRemaining);
+  }
+
+  function resetAutoplay(): void {
+    startAutoplay();
+  }
+
+  prevButton?.addEventListener('click', () => {
+    featuredIndex = (featuredIndex - 1 + total) % total;
+    applySizes();
+    resetAutoplay();
   });
 
   nextButton?.addEventListener('click', () => {
-    featuredIndex = (featuredIndex + 1) % cards.length;
+    featuredIndex = (featuredIndex + 1) % total;
     applySizes();
+    resetAutoplay();
   });
 
-  cards.forEach((card, index) => {
+  let swipeOccurred = false;
+
+  cards.forEach((card) => {
     const trigger = card.querySelector<HTMLButtonElement>('[data-card-trigger]');
     trigger?.addEventListener('click', () => {
-      featuredIndex = index;
-      applySizes();
+      if (swipeOccurred) {
+        swipeOccurred = false;
+        return;
+      }
+      const slug = card.dataset.slug;
+      if (slug) {
+        document.dispatchEvent(new CustomEvent(GAME_DETAIL_OPEN_EVENT, { detail: slug }));
+      }
     });
   });
 
+  if (track) {
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let isSwiping = false;
+    let directionLocked = false;
+
+    track.addEventListener('pointerdown', (event: PointerEvent) => {
+      if (!event.isPrimary) return;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
+      isSwiping = false;
+      directionLocked = false;
+      swipeOccurred = false;
+      track.setPointerCapture(event.pointerId);
+      pauseAutoplay();
+    });
+
+    track.addEventListener('pointermove', (event: PointerEvent) => {
+      if (!event.isPrimary) return;
+      const dx = event.clientX - pointerStartX;
+      const dy = event.clientY - pointerStartY;
+
+      if (!directionLocked) {
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          directionLocked = true;
+          isSwiping = Math.abs(dx) > Math.abs(dy);
+        }
+      }
+
+      if (isSwiping) {
+        event.preventDefault();
+      }
+    });
+
+    track.addEventListener('pointerup', (event: PointerEvent) => {
+      if (!event.isPrimary) return;
+      const dx = event.clientX - pointerStartX;
+
+      if (isSwiping && Math.abs(dx) >= SWIPE_THRESHOLD) {
+        if (dx < 0) {
+          featuredIndex = (featuredIndex + 1) % total;
+        } else {
+          featuredIndex = (featuredIndex - 1 + total) % total;
+        }
+        applySizes();
+        resetAutoplay();
+        swipeOccurred = true;
+      } else {
+        resumeAutoplay();
+      }
+    });
+
+    track.addEventListener('pointercancel', (event: PointerEvent) => {
+      if (!event.isPrimary) return;
+      resumeAutoplay();
+    });
+  }
+
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const card = entry.target as HTMLElement;
+      const width = entry.contentBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+      card.classList.toggle('game-card--overlay-hidden', width < OVERLAY_MIN_WIDTH);
+    }
+  });
+
+  cards.forEach((card) => resizeObserver.observe(card));
+
   applySizes();
+  startAutoplay();
 }

@@ -1,0 +1,525 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.game-detail {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(#{$size-game-detail-width}, calc(100vw - #{$space-6}));
+  height: fit-content;
+  max-height: calc(100vh - #{$space-8});
+  padding: 0;
+  color: $color-primary-dark;
+  background: $color-bg-cream;
+  border: $border-thin solid $color-border-muted;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-dialog;
+  overflow: hidden auto;
+
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s ease allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(24px) scale(0.98);
+    }
+  }
+
+  &::backdrop {
+    background: $color-backdrop;
+    opacity: 0;
+    transition:
+      opacity 0.2s ease,
+      overlay 0.2s ease allow-discrete,
+      display 0.2s ease allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $color-scrollbar-track;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-scrollbar-thumb;
+    border-radius: $radius-full;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: $color-scrollbar-thumb $color-scrollbar-track;
+}
+
+.game-detail__hero {
+  position: relative;
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  padding: $space-3;
+}
+
+.game-detail__close {
+  position: absolute;
+  right: $space-3;
+  top: $space-3;
+  width: $size-xl;
+  height: $size-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-white;
+  border: $border-regular solid $color-primary-dark;
+  box-shadow: $shadow-offset-sm;
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  .material-symbols-outlined {
+    font-size: $font-size-md;
+  }
+
+  &:hover {
+    background-color: $color-bg-hover;
+  }
+
+  @include mobile-down {
+    width: $size-lg;
+    height: $size-lg;
+
+    .material-symbols-outlined {
+      font-size: $font-size-base;
+    }
+  }
+}
+
+.game-detail__body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  padding: $space-5;
+}
+
+.game-detail__title-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  @include mobile-down {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-2;
+  }
+}
+
+.game-detail__title {
+  font-size: $font-size-xl-lg;
+  line-height: $line-height-xl-lg;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.game-detail__ratings {
+  display: flex;
+  gap: $space-3;
+  flex-shrink: 0;
+}
+
+.game-detail__stat {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.game-detail__icon--star {
+  color: $color-accent-yellow;
+  font-size: $font-size-base;
+}
+
+.game-detail__icon--favorite {
+  color: $color-favorite-red;
+  font-size: $font-size-base;
+}
+
+.game-detail__desc {
+  font-size: $font-size-base;
+  line-height: $line-height-md;
+  color: $color-text-muted;
+  font-weight: $font-weight-regular;
+  margin: 0;
+}
+
+.game-detail__widgets {
+  display: flex;
+  flex-direction: row;
+  gap: $space-3;
+
+  @include mobile-down {
+    flex-wrap: wrap;
+  }
+}
+
+.game-detail__widget {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-2 $space-3;
+  background: $color-white;
+  border: $border-thin solid $color-border-muted;
+  box-shadow: 3px 3px 0 $color-primary-dark;
+  border-radius: $radius-sm;
+
+  @include mobile-down {
+    width: calc(50% - #{$space-2});
+    flex: none;
+  }
+}
+
+.game-detail__widget-label {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+.game-detail__widget-value {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.game-detail__actions {
+  display: flex;
+  flex-direction: row;
+  gap: $space-3;
+}
+
+.game-detail__play-btn {
+  flex: 1;
+  height: $size-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-accent-yellow;
+  border: $border-regular solid $color-primary-dark;
+  box-shadow: 4px 4px 0 $color-primary-dark;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background-color: $color-accent-yellow-dark;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 2px 2px 0 $color-primary-dark;
+  }
+
+  @include mobile-down {
+    box-shadow: 4px 4px 0 $color-shadow-dark;
+
+    &:active {
+      box-shadow: 2px 2px 0 $color-shadow-dark;
+    }
+  }
+}
+
+.game-detail__fav-btn {
+  flex: 1;
+  height: $size-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  background: $color-white;
+  border: $border-thin solid $color-border-muted;
+  box-shadow: 4px 4px 0 $color-primary-dark;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+
+  .material-symbols-outlined {
+    font-size: $font-size-md;
+    color: $color-text-muted;
+    transition: color 0.15s ease;
+  }
+
+  &:hover {
+    background-color: $color-bg-hover;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 2px 2px 0 $color-primary-dark;
+  }
+
+  &.is-favorited {
+    .material-symbols-outlined {
+      color: $color-favorite-red;
+    }
+  }
+
+  @include mobile-down {
+    flex: none;
+    width: $size-2xl;
+    box-shadow: 4px 4px 0 $color-shadow-dark;
+
+    .game-detail__fav-label {
+      display: none;
+    }
+
+    &:active {
+      box-shadow: 2px 2px 0 $color-shadow-dark;
+    }
+  }
+}
+
+.game-detail__section-title {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  margin: 0;
+}
+
+.game-detail__records {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.game-detail__record-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.game-detail__record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3;
+  background: $color-white;
+  border-radius: $radius-sm;
+}
+
+.game-detail__record-left {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.game-detail__record-medal {
+  font-size: $font-size-md;
+}
+
+.game-detail__record-name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.game-detail__record-right {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  @include mobile-down {
+    gap: $space-2;
+  }
+}
+
+.game-detail__record-score {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.game-detail__record-time {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+.game-detail__comments {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.game-detail__comment-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-3;
+}
+
+.game-detail__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
+}
+
+.game-detail__avatar--user {
+  width: $size-xl;
+  height: $size-xl;
+  background: $color-accent-yellow;
+  border: $border-thin-plus solid $color-primary-dark;
+}
+
+.game-detail__textarea {
+  flex: 1;
+  min-height: $size-2xl;
+  padding: $space-2 $space-3;
+  border: $border-thin solid $color-primary-dark;
+  border-radius: $radius-sm;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  line-height: $line-height-sm;
+  color: $color-primary-dark;
+  resize: none;
+  outline: none;
+  background: $color-white;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: $color-text-placeholder;
+  }
+
+  &:focus {
+    border-color: $color-icon-blue;
+  }
+}
+
+.game-detail__send-btn {
+  width: $size-xl;
+  height: $size-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: $color-bg-dark-secondary;
+  border: $border-thin-plus solid $color-primary-dark;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  .material-symbols-outlined {
+    color: $color-white;
+    font-size: $font-size-md;
+  }
+
+  &:hover {
+    background-color: $color-bg-dark-hover;
+  }
+}
+
+.game-detail__comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.game-detail__comment {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-3;
+  background: $color-white;
+  box-shadow: 3px 3px 0 $color-primary-dark;
+  border-radius: $radius-md;
+}
+
+.game-detail__comment-header {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  .game-detail__avatar {
+    width: $size-md-lg;
+    height: $size-md-lg;
+    border: $border-thin solid $color-primary-dark;
+  }
+}
+
+.game-detail__comment-name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+}
+
+.game-detail__comment-time {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+  margin-left: auto;
+}
+
+.game-detail__comment-text {
+  font-size: $font-size-sm;
+  line-height: $line-height-md;
+  margin: 0;
+}
+
+.game-detail__comment-footer {
+  display: flex;
+  align-items: center;
+}
+
+.game-detail__like-btn {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: $color-text-muted;
+  transition: color 0.15s ease;
+
+  .material-symbols-outlined {
+    font-size: $font-size-base;
+  }
+
+  &.is-liked {
+    color: $color-favorite-red;
+  }
+}
+
+.game-detail__like-count {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+}

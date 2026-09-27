@@ -50,6 +50,9 @@ module.exports = (env, argv) => {
         ? [new MiniCssExtractPlugin({ filename: 'styles.[contenthash].css' })]
         : []),
     ],
+    performance: {
+      hints: false,
+    },
     devServer: {
       static: path.resolve(__dirname, 'src'),
       open: true,

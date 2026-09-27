@@ -1,16 +1,29 @@
 import './header.scss';
 import logo from '../../assets/icons/logo.svg';
 import logoWhite from '../../assets/icons/logo-white.svg';
+import { getCurrentRoute, routeHref } from '../../ts/router';
 
 export const AUTH_OPEN_EVENT = 'auth:open';
 
 export type AuthMode = 'login' | 'register';
 
-const NAV_LINKS: { label: string; active?: boolean }[] = [
-  { label: 'Home', active: true },
-  { label: 'Library' },
-  { label: 'Tournaments' },
-  { label: 'Community' },
+const NAV_LINKS: { label: string; slug: string }[] = [
+  {
+    label: 'Home',
+    slug: '',
+  },
+  {
+    label: 'Library',
+    slug: 'library',
+  },
+  {
+    label: 'Tournaments',
+    slug: 'tournaments',
+  },
+  {
+    label: 'Community',
+    slug: 'community',
+  },
 ];
 
 function renderLogo(): string {
@@ -19,9 +32,9 @@ function renderLogo(): string {
 
 function renderDesktopLinks(): string {
   return NAV_LINKS.map(
-    ({ label, active }) => `
+    ({ label, slug }) => `
       <li>
-        <a href="/" class="header__link${active ? ' header__link--active' : ''}">${label}</a>
+        <a href="${routeHref(slug)}" class="header__link" data-nav-slug="${slug}">${label}</a>
       </li>
     `,
   ).join('');
@@ -29,9 +42,9 @@ function renderDesktopLinks(): string {
 
 function renderMobileLinks(): string {
   return NAV_LINKS.map(
-    ({ label, active }) => `
+    ({ label, slug }) => `
       <li>
-        <a href="/" class="mobile-menu__link${active ? ' mobile-menu__link--active' : ''}">${label}</a>
+        <a href="${routeHref(slug)}" class="mobile-menu__link" data-nav-slug="${slug}">${label}</a>
       </li>
     `,
   ).join('');
@@ -41,7 +54,7 @@ export function createHeader(): HTMLElement {
   const header = document.createElement('header');
   header.className = 'header';
   header.innerHTML = `
-    <a href="/" class="header__brand" aria-label="MiniGames home">
+    <a href="${routeHref('')}" class="header__brand" aria-label="MiniGames home">
       ${renderLogo()}
     </a>
 
@@ -74,7 +87,7 @@ export function createHeader(): HTMLElement {
 
     <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Mobile navigation" hidden>
       <div class="mobile-menu__top">
-        <a href="/" class="header__brand" aria-label="MiniGames home">
+        <a href="${routeHref('')}" class="header__brand" aria-label="MiniGames home">
           <img class="header__logo-img" src="${logoWhite}" alt="MiniGames" />
         </a>
         <button type="button" class="mobile-menu__close" aria-label="Close menu">
@@ -92,8 +105,33 @@ export function createHeader(): HTMLElement {
   `;
 
   initHeaderBehavior(header);
+  initActiveLinks(header);
 
   return header;
+}
+
+function initActiveLinks(header: HTMLElement): void {
+  const links = header.querySelectorAll<HTMLAnchorElement>('[data-nav-slug]');
+
+  const update = (): void => {
+    const route = getCurrentRoute();
+    links.forEach((link) => {
+      const linkRoute = link.dataset.navSlug || 'home';
+      const isActive = linkRoute === route;
+      const activeClass = link.classList.contains('header__link')
+        ? 'header__link--active'
+        : 'mobile-menu__link--active';
+      link.classList.toggle(activeClass, isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  window.addEventListener('hashchange', update);
+  update();
 }
 
 function initHeaderBehavior(header: HTMLElement): void {
@@ -131,6 +169,9 @@ function initHeaderBehavior(header: HTMLElement): void {
   };
 
   burger.addEventListener('click', openMobileMenu);
+  mobileMenu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMobileMenu);
+  });
   closeButton.addEventListener('click', closeMobileMenu);
   backdrop.addEventListener('click', closeMobileMenu);
 
