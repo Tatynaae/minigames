@@ -88,6 +88,7 @@ export function createGamesCarousel(): HTMLElement {
 
 const AUTOPLAY_INTERVAL = 4000;
 const SWIPE_THRESHOLD = 50;
+const OVERLAY_MIN_WIDTH = 288;
 
 function initCarouselBehavior(section: HTMLElement): void {
   const cards = Array.from(section.querySelectorAll<HTMLLIElement>('[data-card]'));
@@ -238,6 +239,16 @@ function initCarouselBehavior(section: HTMLElement): void {
       resumeAutoplay();
     });
   }
+
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const card = entry.target as HTMLElement;
+      const width = entry.contentBoxSize?.[0]?.inlineSize ?? entry.contentRect.width;
+      card.classList.toggle('game-card--overlay-hidden', width < OVERLAY_MIN_WIDTH);
+    }
+  });
+
+  cards.forEach((card) => resizeObserver.observe(card));
 
   applySizes();
   startAutoplay();

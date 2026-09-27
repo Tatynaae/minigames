@@ -166,20 +166,12 @@
     $color-overlay-mid 17.31%,
     $color-overlay-end 46.15%
   );
-  opacity: 0;
-  pointer-events: none;
+  opacity: 1;
   transition: opacity 0.2s ease;
 
-  .game-card--featured & {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  @include desktop-sm-up {
-    .game-card:not(.game-card--collapsed):not(.game-card--hidden) & {
-      opacity: 1;
-      pointer-events: auto;
-    }
+  .game-card--overlay-hidden & {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
