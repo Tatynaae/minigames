@@ -1,0 +1,242 @@
+@use 'sass:color';
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.header {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-5 clamp($space-3, 4vw, $space-10);
+  background: $color-bg-cream;
+  border-bottom: $border-regular solid $color-primary-dark;
+
+  @include tablet-down {
+    padding: $space-3 $space-7;
+  }
+
+  @include mobile-down {
+    padding: $space-3;
+  }
+}
+
+.header__brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-2;
+  flex: none;
+
+  @include tablet-down {
+    width: $size-header-brand;
+  }
+}
+
+.header__logo-img {
+  height: $size-lg;
+  width: auto;
+  flex: none;
+
+  @include tablet-down {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.header__nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $space-6;
+
+  @include tablet-down {
+    display: none;
+  }
+}
+
+.header__links {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $space-7;
+  list-style: none;
+}
+
+.header__link {
+  font-weight: $font-weight-medium;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: $color-text-muted;
+  white-space: nowrap;
+
+  &:hover {
+    color: $color-primary-dark;
+  }
+}
+
+.header__link--active {
+  font-weight: $font-weight-bold;
+  color: $color-primary-dark;
+}
+
+.header__buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.header__actions {
+  display: none;
+  @include tablet-down {
+    display: flex;
+    gap: $space-3;
+  }
+}
+
+.header__mobile-cta {
+  display: none;
+  flex: none;
+
+  @include tablet-down {
+    display: inline-flex;
+    padding: $space-2 $space-3;
+    height: $button-height-sm-plus;
+  }
+
+  @include mobile-down {
+    display: none;
+  }
+}
+
+.header__burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: $size-lg;
+  height: $size-lg;
+  padding: $space-2;
+  color: $color-icon-blue;
+  background: $color-white;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-sm;
+
+  @include tablet-down {
+    display: flex;
+  }
+}
+
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: $color-backdrop;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @include tablet-up {
+    display: none;
+  }
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: auto;
+  z-index: 100;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  width: 100%;
+  max-width: 100%;
+  padding: $space-5;
+  background: $color-bg-dark;
+  border-left: $border-regular solid $color-primary-dark;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+
+  &.is-open {
+    transform: translateX(0);
+  }
+
+  @include tablet-up {
+    display: none;
+  }
+}
+
+.mobile-menu__top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-menu__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $size-lg;
+  height: $size-lg;
+  padding: $space-2;
+  color: $color-white;
+  background: $color-bg-dark-secondary;
+  border: none;
+  border-radius: $radius-sm;
+
+  &:hover {
+    background: color.adjust($color-bg-dark-secondary, $lightness: 8%);
+  }
+}
+
+.mobile-menu__links {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: $space-5;
+  list-style: none;
+}
+
+.mobile-menu__link {
+  display: block;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-text-muted-light;
+
+  &:hover {
+    color: $color-white;
+  }
+}
+
+.mobile-menu__link--active {
+  font-weight: $font-weight-bold;
+  color: $color-accent-yellow;
+
+  &:hover {
+    color: $color-accent-yellow;
+  }
+}
+
+.mobile-menu__buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+
+  .btn {
+    width: 100%;
+  }
+}
