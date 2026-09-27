@@ -18,6 +18,12 @@
   }
 }
 
+@mixin desktop-sm-up {
+  @media (min-width: $breakpoint-desktop-sm) {
+    @content;
+  }
+}
+
 @mixin desktop-overflow {
   @media (min-width: $breakpoint-desktop + 1) {
     @content;

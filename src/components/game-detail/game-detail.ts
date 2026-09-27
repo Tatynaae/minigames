@@ -313,10 +313,10 @@ export function createGameDetail(): HTMLDialogElement {
     });
   }
 
-  const staticGame = GAMES.find((g) => g.slug === 'tukoni-forest-keepers');
-
-  document.addEventListener(GAME_DETAIL_OPEN_EVENT, (() => {
-    if (staticGame) openDialog(staticGame);
+  document.addEventListener(GAME_DETAIL_OPEN_EVENT, ((event: CustomEvent<string>) => {
+    const slug = event.detail;
+    const game = GAMES.find((g) => g.slug === slug);
+    if (game) openDialog(game);
   }) as EventListener);
 
   return dialog;
