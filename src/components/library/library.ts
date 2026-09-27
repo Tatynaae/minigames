@@ -1,5 +1,6 @@
 import './library.scss';
 import { GAMES, formatLikes, type Game } from '../../data/games';
+import { GAME_DETAIL_OPEN_EVENT } from '../game-detail/game-detail';
 
 type CategoryFilter = 'all' | 'puzzle' | 'arcade' | 'farm' | 'card' | 'strategy';
 type SortOption = 'rating-desc' | 'rating-asc' | 'name-asc' | 'name-desc';
@@ -62,7 +63,7 @@ function renderCard(game: Game): string {
   const isFree = game.price.toLowerCase() === 'free';
 
   return `
-    <li class="library-card">
+    <li class="library-card" data-slug="${game.slug}">
       <img class="library-card__image" src="${game.image}" alt="${game.name}" loading="lazy" />
       <div class="library-card__content">
         <div class="library-card__header">
@@ -267,6 +268,16 @@ function initLibraryBehavior(section: HTMLElement): void {
     if (!sortMenu.hidden && !section.querySelector('.sort')?.contains(event.target as Node)) {
       closeSortMenu();
     }
+  });
+
+  grid.addEventListener('click', (event: MouseEvent) => {
+    const btn = (event.target as HTMLElement).closest<HTMLButtonElement>('.btn--details');
+    if (!btn) return;
+
+    const card = btn.closest<HTMLElement>('[data-slug]');
+    if (!card?.dataset.slug) return;
+
+    document.dispatchEvent(new CustomEvent(GAME_DETAIL_OPEN_EVENT, { detail: card.dataset.slug }));
   });
 
   pagination.addEventListener('click', (event: MouseEvent) => {
