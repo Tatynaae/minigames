@@ -1,0 +1,94 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-5;
+  padding: $space-11 $space-5;
+  text-align: center;
+
+  @include mobile-down {
+    padding: $space-9 $space-3;
+    gap: $space-3;
+  }
+}
+
+.not-found__code {
+  font-family: $font-family-base;
+  font-weight: $font-weight-black;
+  font-size: 120px;
+  line-height: 1;
+  color: $color-primary-dark;
+
+  @include tablet-down {
+    font-size: 96px;
+  }
+
+  @include mobile-down {
+    font-size: 72px;
+  }
+}
+
+.not-found__title {
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-xl-lg;
+  line-height: $line-height-xl-lg;
+  color: $color-primary-dark;
+  margin: 0;
+
+  @include mobile-down {
+    font-size: $font-size-lg;
+  }
+}
+
+.not-found__desc {
+  font-family: $font-family-base;
+  font-weight: $font-weight-regular;
+  font-size: $font-size-base;
+  line-height: $line-height-md;
+  color: $color-text-muted;
+  max-width: 420px;
+  margin: 0;
+
+  @include mobile-down {
+    font-size: $font-size-sm;
+  }
+}
+
+.not-found__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-3 $space-7;
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  color: $color-primary-dark;
+  background: $color-accent-yellow;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-full;
+  box-shadow: $shadow-offset-sm;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: $color-accent-yellow-dark;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  @include mobile-down {
+    padding: $space-2-5 $space-5;
+    font-size: $font-size-sm;
+  }
+}
