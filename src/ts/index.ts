@@ -54,8 +54,6 @@ if (app) {
   document.body.append(authDialog);
   document.body.append(gameDialog);
 
-  // --- Game detail URL sync ---
-
   document.addEventListener(GAME_DETAIL_OPEN_EVENT, ((event: CustomEvent<string>) => {
     if (getQueryParam('game') !== event.detail) {
       setQueryParams({ game: event.detail });
@@ -67,8 +65,6 @@ if (app) {
       clearQueryParam('game');
     }
   });
-
-  // --- Auth dialog URL sync ---
 
   document.addEventListener(AUTH_OPEN_EVENT, ((event: CustomEvent<AuthMode>) => {
     if (getQueryParam('auth') !== event.detail) {
@@ -82,12 +78,9 @@ if (app) {
     }
   });
 
-  // --- Popstate handler (back/forward & SPA navigation) ---
-
   window.addEventListener('popstate', () => {
     renderRoute();
 
-    // Game detail dialog
     const gameSlug = getQueryParam('game');
     if (gameSlug && !gameDialog.open) {
       document.dispatchEvent(new CustomEvent(GAME_DETAIL_OPEN_EVENT, { detail: gameSlug }));
@@ -95,7 +88,6 @@ if (app) {
       gameDialog.close();
     }
 
-    // Auth dialog
     const authMode = getQueryParam('auth');
     if ((authMode === 'login' || authMode === 'register') && !authDialog.open) {
       document.dispatchEvent(new CustomEvent<AuthMode>(AUTH_OPEN_EVENT, { detail: authMode }));
@@ -104,11 +96,8 @@ if (app) {
     }
   });
 
-  // --- Initial render ---
-
   renderRoute();
 
-  // Check initial URL params for dialogs
   const initialGame = getQueryParam('game');
   if (initialGame) {
     document.dispatchEvent(new CustomEvent(GAME_DETAIL_OPEN_EVENT, { detail: initialGame }));

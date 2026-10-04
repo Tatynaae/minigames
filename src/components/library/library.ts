@@ -9,9 +9,12 @@ import {
 import { formatLikes, getGameCardImage } from '../../data/games';
 import { GAME_DETAIL_OPEN_EVENT } from '../game-detail/game-detail';
 import { showSnackbar } from '../snackbar/snackbar';
+import { getQueryParam, setQueryParams } from '../../ts/router';
 
 const PAGE_SIZE = 6;
 const DEFAULT_SORT = 'rating-desc';
+const DEFAULT_CATEGORY = 'all';
+const BREAKPOINT_MOBILE_MAX = 599;
 
 const SORT_OPTIONS: { value: string; label: string }[] = [
   { value: 'rating-asc', label: 'Rating ↑' },
@@ -96,9 +99,9 @@ function renderCardsSkeleton(): string {
     <li class="library-card library-card--skeleton">
       <div class="library-card__image skeleton-pulse"></div>
       <div class="library-card__content">
-        <div class="skeleton-bar" style="width: 60%; height: 20px"></div>
-        <div class="skeleton-bar" style="width: 100%; height: 14px"></div>
-        <div class="skeleton-bar" style="width: 80%; height: 14px"></div>
+        <div class="skeleton-bar skeleton-bar--title"></div>
+        <div class="skeleton-bar skeleton-bar--text"></div>
+        <div class="skeleton-bar skeleton-bar--text-short"></div>
       </div>
     </li>
   `,
@@ -125,7 +128,7 @@ function renderGridEmpty(): string {
 }
 
 function getMaxVisiblePages(): number {
-  return window.innerWidth <= 599 ? 3 : 4;
+  return window.innerWidth <= BREAKPOINT_MOBILE_MAX ? 3 : 4;
 }
 
 function getPageWindow(current: number, total: number, maxVisible: number): number[] {
@@ -142,9 +145,9 @@ function getPageWindow(current: number, total: number, maxVisible: number): numb
 
 function renderPagination(page: number, totalPages: number): string {
   const maxVisible = getMaxVisiblePages();
-  const window = getPageWindow(page, totalPages, maxVisible);
+  const pageWindow = getPageWindow(page, totalPages, maxVisible);
 
-  const pages = window
+  const pages = pageWindow
     .map(
       (num) => `
       <li>
@@ -255,7 +258,8 @@ function initLibraryBehavior(section: HTMLElement): void {
 
   const sortItems = Array.from(sortMenu.querySelectorAll<HTMLLIElement>('[data-sort]'));
 
-  let category = 'all';
+  let apiDefaultCategory = DEFAULT_CATEGORY;
+  let category = DEFAULT_CATEGORY;
   let sort = DEFAULT_SORT;
   let page = 1;
   let totalPages = 1;
@@ -314,48 +318,6 @@ function initLibraryBehavior(section: HTMLElement): void {
     }
   };
 
-  const loadCategories = async (): Promise<void> => {
-    try {
-      const categories = await fetchCategories();
-
-      chipsContainer.innerHTML = renderChips(categories);
-
-      const defaultCategory = categories.find((c) => c.isDefault);
-      if (defaultCategory) {
-        category = defaultCategory.slug;
-      }
-
-      updateChipsUI();
-
-      const chips = Array.from(
-        chipsContainer.querySelectorAll<HTMLButtonElement>('[data-category]'),
-      );
-      chips.forEach((chip) => {
-        chip.addEventListener('click', () => {
-          category = chip.dataset.category ?? 'all';
-          page = 1;
-          updateChipsUI();
-          loadGames();
-        });
-      });
-    } catch {
-      chipsContainer.innerHTML = `
-        <li class="library__chips-error">
-          <span>Failed to load categories.</span>
-          <button type="button" class="btn btn--retry btn--retry-sm" data-chips-retry>Retry</button>
-        </li>
-      `;
-      showSnackbar('Failed to load categories', 'error');
-
-      chipsContainer.querySelector('[data-chips-retry]')?.addEventListener('click', () => {
-        chipsContainer.innerHTML = renderChipsSkeleton();
-        loadCategories();
-      });
-    }
-  };
-
-  // --- User-driven state change (pushes URL then fetches) ---
-
   const applyState = (newCategory: string, newSort: string, newPage: number): void => {
     category = newCategory;
     sort = newSort;
@@ -365,8 +327,6 @@ function initLibraryBehavior(section: HTMLElement): void {
     updateSortUI();
     loadGames();
   };
-
-  // --- Load categories from API ---
 
   const loadCategories = async (): Promise<void> => {
     try {
@@ -379,7 +339,6 @@ function initLibraryBehavior(section: HTMLElement): void {
         apiDefaultCategory = defaultCat.slug;
       }
 
-      // Read URL state now that we know the API default
       const urlState = readUrlState(apiDefaultCategory);
       category = urlState.category;
       sort = urlState.sort;
@@ -388,7 +347,6 @@ function initLibraryBehavior(section: HTMLElement): void {
       updateChipsUI();
       updateSortUI();
 
-      // Bind chip click handlers
       const chips = Array.from(
         chipsContainer.querySelectorAll<HTMLButtonElement>('[data-category]'),
       );
@@ -398,7 +356,6 @@ function initLibraryBehavior(section: HTMLElement): void {
         });
       });
 
-      // Initial load
       loadGames();
     } catch {
       chipsContainer.innerHTML = `
@@ -416,8 +373,6 @@ function initLibraryBehavior(section: HTMLElement): void {
     }
   };
 
-  // --- Sort menu interactions ---
-
   const openSortMenu = (): void => {
     sortMenu.hidden = false;
     sortTrigger.setAttribute('aria-expanded', 'true');
@@ -433,11 +388,8 @@ function initLibraryBehavior(section: HTMLElement): void {
   };
 
   const selectSort = (value: string): void => {
-    sort = value;
-    page = 1;
     closeSortMenu(true);
-    updateSortUI();
-    loadGames();
+    applyState(category, value, 1);
   };
 
   sortTrigger.addEventListener('click', () => {
@@ -470,8 +422,6 @@ function initLibraryBehavior(section: HTMLElement): void {
     }
   });
 
-  // --- Grid click: game details ---
-
   grid.addEventListener('click', (event: MouseEvent) => {
     const btn = (event.target as HTMLElement).closest<HTMLButtonElement>('.btn--details');
     if (!btn) return;
@@ -482,18 +432,31 @@ function initLibraryBehavior(section: HTMLElement): void {
     document.dispatchEvent(new CustomEvent(GAME_DETAIL_OPEN_EVENT, { detail: card.dataset.slug }));
   });
 
-  // --- Pagination clicks ---
-
   pagination.addEventListener('click', (event: MouseEvent) => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-page]');
     if (!button || button.disabled) return;
 
-    page = Number(button.dataset.page);
-    loadGames();
+    applyState(category, sort, Number(button.dataset.page));
     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
+  window.addEventListener('popstate', () => {
+    if (window.location.pathname !== '/library') return;
+
+    const urlState = readUrlState(apiDefaultCategory);
+    if (urlState.category !== category || urlState.sort !== sort || urlState.page !== page) {
+      category = urlState.category;
+      sort = urlState.sort;
+      page = urlState.page;
+      updateChipsUI();
+      updateSortUI();
+      loadGames();
+    }
+  });
+
+  const initialUrlState = readUrlState(DEFAULT_CATEGORY);
+  sort = initialUrlState.sort;
+  page = initialUrlState.page;
   updateSortUI();
   loadCategories();
-  loadGames();
 }

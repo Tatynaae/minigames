@@ -239,7 +239,6 @@
   border-radius: $radius-full;
 }
 
-// Skeleton rows
 @keyframes skeleton-shimmer {
   0% {
     background-position: 100% 0;
@@ -308,7 +307,6 @@
   }
 }
 
-// State containers (error / empty)
 .leaderboard-state {
   display: flex;
   flex-direction: column;

@@ -6,13 +6,9 @@ const PATH_ROUTES: Record<string, Route> = {
   '/library': 'library',
 };
 
-// --- Route resolution ---
-
 export function getCurrentRoute(): Route {
   return PATH_ROUTES[window.location.pathname] ?? '404';
 }
-
-// --- Navigation ---
 
 export function navigateTo(path: string, replace = false): void {
   if (replace) {
@@ -27,8 +23,6 @@ export function routeHref(slug: string): string {
   if (slug === '' || slug === 'home') return '/';
   return `/${slug}`;
 }
-
-// --- Query parameters ---
 
 export function getQueryParam(key: string): string | null {
   return new URLSearchParams(window.location.search).get(key);

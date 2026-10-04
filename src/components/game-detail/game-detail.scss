@@ -579,6 +579,36 @@
   border-radius: $radius-full;
 }
 
+.skeleton-bar--heading {
+  width: 60%;
+  height: $size-md-lg;
+}
+
+.skeleton-bar--line-full {
+  width: 100%;
+  height: $font-size-sm;
+}
+
+.skeleton-bar--line-wide {
+  width: 90%;
+  height: $font-size-sm;
+}
+
+.skeleton-bar--line-narrow {
+  width: 70%;
+  height: $font-size-sm;
+}
+
+.skeleton-bar--widget {
+  flex: 1;
+  height: $size-3xl;
+}
+
+.game-detail__skeleton-widgets {
+  display: flex;
+  gap: $space-3;
+}
+
 .game-detail__hero--skeleton {
   background: $color-border-light;
 }

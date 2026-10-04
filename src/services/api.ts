@@ -58,8 +58,6 @@ export async function fetchLeaderboard(): Promise<ApiLeaderboardEntry[]> {
   return result.data;
 }
 
-// --- library: categories ---
-
 export interface ApiCategory {
   slug: string;
   label: string;
@@ -75,8 +73,6 @@ export async function fetchCategories(): Promise<ApiCategory[]> {
   const result = await fetchJson<CategoriesResponse>(`${API_BASE}/api/categories`);
   return result.data;
 }
-
-// --- library: games list ---
 
 export interface ApiGame {
   slug: string;
@@ -118,8 +114,6 @@ export async function fetchGames(params: FetchGamesParams = {}): Promise<GamesPa
   return fetchJson<GamesPageResult>(`${API_BASE}/api/games?${query.toString()}`);
 }
 
-// --- game details ---
-
 export interface ApiGameDetailSpecs {
   genre: string;
   players: string;
@@ -151,8 +145,6 @@ export async function fetchGameDetail(slug: string, userEmail?: string): Promise
   const result = await fetchJson<{ data: ApiGameDetail }>(`${API_BASE}/api/games/${slug}${query}`);
   return result.data;
 }
-
-// --- game comments ---
 
 export interface ApiComment {
   commentId: string;
