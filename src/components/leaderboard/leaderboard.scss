@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../styles/tokens' as *;
 @use '../../styles/mixins' as *;
 
@@ -236,4 +237,109 @@
   background: $color-bg-cream;
   border: $border-thin-plus solid $color-primary-dark;
   border-radius: $radius-full;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+%skeleton-base {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    $color-border-light 25%,
+    color.adjust($color-border-light, $lightness: -3%) 37%,
+    $color-border-light 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: $radius-sm;
+}
+
+.skeleton-bar {
+  @extend %skeleton-base;
+  height: 14px;
+
+  &--rank {
+    width: 32px;
+  }
+
+  &--name {
+    width: 100px;
+  }
+
+  &--num {
+    width: 48px;
+  }
+
+  &--streak {
+    width: 72px;
+  }
+
+  &--tag {
+    width: 80px;
+    height: 22px;
+    border-radius: $radius-full;
+  }
+}
+
+.skeleton-circle {
+  @extend %skeleton-base;
+  width: $size-xl;
+  height: $size-xl;
+  flex: none;
+  border-radius: $radius-full;
+
+  @include tablet-down {
+    width: $size-md-lg;
+    height: $size-md-lg;
+  }
+
+  @include mobile-down {
+    width: $size-md;
+    height: $size-md;
+  }
+}
+
+.leaderboard-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  min-height: 200px;
+  padding: $space-7;
+  text-align: center;
+
+  @include mobile-down {
+    min-height: 140px;
+    padding: $space-5;
+  }
+}
+
+.leaderboard-state__icon {
+  font-size: $font-size-xxl;
+  color: $color-text-muted;
+}
+
+.leaderboard-state--error .leaderboard-state__icon {
+  color: $color-error;
+}
+
+.leaderboard-state__text {
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-text-muted;
+
+  @include mobile-down {
+    font-size: $font-size-sm;
+  }
 }

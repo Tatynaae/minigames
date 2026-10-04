@@ -223,3 +223,94 @@
 .game-card__stat-icon--favorite {
   color: $color-favorite-red;
 }
+
+.game-card--skeleton {
+  pointer-events: none;
+}
+
+.skeleton-pulse {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    $color-border-light 25%,
+    color.adjust($color-border-light, $lightness: -3%) 37%,
+    $color-border-light 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: $radius-sm;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.carousel-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  min-height: $size-game-card-height;
+  padding: $space-7;
+  text-align: center;
+
+  @include tablet-down {
+    min-height: $size-game-card-height-tablet;
+    padding: $space-5;
+  }
+
+  @include mobile-down {
+    min-height: $size-game-card-height-mobile;
+    padding: $space-3;
+  }
+}
+
+.carousel-state__icon {
+  font-size: $font-size-xxl;
+  color: $color-text-muted;
+}
+
+.carousel-state--error .carousel-state__icon {
+  color: $color-error;
+}
+
+.carousel-state__text {
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-text-muted;
+
+  @include mobile-down {
+    font-size: $font-size-sm;
+  }
+}
+
+.btn--retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-5;
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  font-size: $font-size-sm;
+  color: $color-primary-dark;
+  background: $color-accent-yellow;
+  border: $border-regular solid $color-primary-dark;
+  border-radius: $radius-full;
+  box-shadow: $shadow-offset-sm;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $color-accent-yellow-dark;
+  }
+}
