@@ -1,7 +1,7 @@
 import './header.scss';
 import logo from '../../assets/icons/logo.svg';
 import logoWhite from '../../assets/icons/logo-white.svg';
-import { getCurrentRoute, routeHref } from '../../ts/router';
+import { getCurrentRoute, routeHref, navigateTo } from '../../ts/router';
 
 export const AUTH_OPEN_EVENT = 'auth:open';
 
@@ -113,10 +113,18 @@ export function createHeader(): HTMLElement {
 function initActiveLinks(header: HTMLElement): void {
   const links = header.querySelectorAll<HTMLAnchorElement>('[data-nav-slug]');
 
+  links.forEach((link) => {
+    link.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      navigateTo(link.getAttribute('href') ?? '/');
+    });
+  });
+
   const update = (): void => {
     const route = getCurrentRoute();
     links.forEach((link) => {
-      const linkRoute = link.dataset.navSlug || 'home';
+      const slug = link.dataset.navSlug ?? '';
+      const linkRoute = slug === '' ? 'home' : slug;
       const isActive = linkRoute === route;
       const activeClass = link.classList.contains('header__link')
         ? 'header__link--active'
@@ -130,7 +138,7 @@ function initActiveLinks(header: HTMLElement): void {
     });
   };
 
-  window.addEventListener('hashchange', update);
+  window.addEventListener('popstate', update);
   update();
 }
 
@@ -167,6 +175,13 @@ function initHeaderBehavior(header: HTMLElement): void {
     };
     mobileMenu.addEventListener('transitionend', onTransitionEnd);
   };
+
+  header.querySelectorAll<HTMLAnchorElement>('.header__brand').forEach((brand) => {
+    brand.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
+      navigateTo('/');
+    });
+  });
 
   burger.addEventListener('click', openMobileMenu);
   mobileMenu.querySelectorAll('a').forEach((link) => {
