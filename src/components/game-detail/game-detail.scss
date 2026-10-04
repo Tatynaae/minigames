@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../styles/tokens' as *;
 @use '../../styles/mixins' as *;
 
@@ -522,4 +523,102 @@
 .game-detail__like-count {
   font-size: $font-size-xs;
   font-weight: $font-weight-bold;
+}
+
+.game-detail__like-display {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  color: $color-text-muted;
+
+  .material-symbols-outlined {
+    font-size: $font-size-base;
+  }
+
+  .is-filled {
+    color: $color-favorite-red;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.skeleton-bar {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    $color-border-light 25%,
+    color.adjust($color-border-light, $lightness: -3%) 37%,
+    $color-border-light 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: $radius-sm;
+}
+
+.skeleton-circle-sm {
+  display: inline-block;
+  width: $size-md-lg;
+  height: $size-md-lg;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    $color-border-light 25%,
+    color.adjust($color-border-light, $lightness: -3%) 37%,
+    $color-border-light 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: $radius-full;
+}
+
+.game-detail__hero--skeleton {
+  background: $color-border-light;
+}
+
+.game-detail__comment--skeleton {
+  pointer-events: none;
+}
+
+.game-detail__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  min-height: 200px;
+  padding: $space-7;
+  text-align: center;
+}
+
+.game-detail__state-icon {
+  font-size: $font-size-xxl;
+  color: $color-text-muted;
+}
+
+.game-detail__state--error .game-detail__state-icon {
+  color: $color-error;
+}
+
+.game-detail__state-text {
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-text-muted;
+}
+
+.game-detail__no-comments {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  text-align: center;
+  padding: $space-5 0;
+  margin: 0;
 }

@@ -1,51 +1,46 @@
 import './library.scss';
-import { GAMES, formatLikes, type Game } from '../../data/games';
+import {
+  fetchCategories,
+  fetchGames,
+  type ApiCategory,
+  type ApiGame,
+  type GamesPageMeta,
+} from '../../services/api';
+import { formatLikes, getGameCardImage } from '../../data/games';
 import { GAME_DETAIL_OPEN_EVENT } from '../game-detail/game-detail';
-
-type CategoryFilter = 'all' | 'puzzle' | 'arcade' | 'farm' | 'card' | 'strategy';
-type SortOption = 'rating-desc' | 'rating-asc' | 'name-asc' | 'name-desc';
+import { showSnackbar } from '../snackbar/snackbar';
 
 const PAGE_SIZE = 6;
+const DEFAULT_SORT = 'rating-desc';
 
-const CATEGORIES: { value: CategoryFilter; label: string }[] = [
-  { value: 'all', label: 'All Games' },
-  { value: 'puzzle', label: 'Puzzle' },
-  { value: 'card', label: 'Card' },
-  { value: 'farm', label: 'Farm' },
-  { value: 'strategy', label: 'Strategy' },
-  { value: 'arcade', label: 'Arcade' },
-];
-
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+const SORT_OPTIONS: { value: string; label: string }[] = [
   { value: 'rating-asc', label: 'Rating ↑' },
   { value: 'rating-desc', label: 'Rating ↓' },
   { value: 'name-asc', label: 'Name A→Z' },
   { value: 'name-desc', label: 'Name Z→A' },
 ];
 
-const SORTERS: Record<SortOption, (a: Game, b: Game) => number> = {
-  'rating-asc': (a, b) => a.rating - b.rating,
-  'rating-desc': (a, b) => b.rating - a.rating,
-  'name-asc': (a, b) => a.name.localeCompare(b.name),
-  'name-desc': (a, b) => b.name.localeCompare(a.name),
-};
-
-const CATEGORY_LABELS: Record<string, string> = Object.fromEntries(
-  CATEGORIES.map(({ value, label }) => [value, label]),
-);
-
-function sortLabel(sort: SortOption): string {
+function sortLabel(sort: string): string {
   return SORT_OPTIONS.find(({ value }) => value === sort)?.label ?? '';
 }
 
-function renderChips(): string {
-  return CATEGORIES.map(
-    ({ value, label }) => `
+function renderChipsSkeleton(): string {
+  return Array.from(
+    { length: 6 },
+    () => '<li><span class="chip chip--skeleton skeleton-pulse"></span></li>',
+  ).join('');
+}
+
+function renderChips(categories: ApiCategory[]): string {
+  return categories
+    .map(
+      ({ slug, label }) => `
       <li>
-        <button type="button" class="chip" data-category="${value}" aria-pressed="false">${label}</button>
+        <button type="button" class="chip" data-category="${slug}" aria-pressed="false">${label}</button>
       </li>
     `,
-  ).join('');
+    )
+    .join('');
 }
 
 function renderSortOptions(): string {
@@ -59,17 +54,19 @@ function renderSortOptions(): string {
   ).join('');
 }
 
-function renderCard(game: Game): string {
+function renderCard(game: ApiGame): string {
   const isFree = game.price.toLowerCase() === 'free';
+  const image = getGameCardImage(game.slug) || game.cardImage;
+  const categoryLabel = game.category.charAt(0).toUpperCase() + game.category.slice(1);
 
   return `
     <li class="library-card" data-slug="${game.slug}">
-      <img class="library-card__image" src="${game.image}" alt="${game.name}" loading="lazy" />
+      <img class="library-card__image" src="${image}" alt="${game.name}" loading="lazy" />
       <div class="library-card__content">
         <div class="library-card__header">
           <div class="library-card__info">
             <h3 class="library-card__title">${game.name}</h3>
-            <span class="badge">${CATEGORY_LABELS[game.category] ?? game.category}</span>
+            <span class="badge">${categoryLabel}</span>
           </div>
           <span class="library-card__price${isFree ? ' library-card__price--free' : ''}">${game.price}</span>
         </div>
@@ -92,20 +89,74 @@ function renderCard(game: Game): string {
   `;
 }
 
+function renderCardsSkeleton(): string {
+  return Array.from(
+    { length: PAGE_SIZE },
+    () => `
+    <li class="library-card library-card--skeleton">
+      <div class="library-card__image skeleton-pulse"></div>
+      <div class="library-card__content">
+        <div class="skeleton-bar" style="width: 60%; height: 20px"></div>
+        <div class="skeleton-bar" style="width: 100%; height: 14px"></div>
+        <div class="skeleton-bar" style="width: 80%; height: 14px"></div>
+      </div>
+    </li>
+  `,
+  ).join('');
+}
+
+function renderGridError(): string {
+  return `
+    <li class="library__state library__state--error" role="alert">
+      <span class="material-symbols-outlined library__state-icon" aria-hidden="true">error</span>
+      <p class="library__state-text">Failed to load games.</p>
+      <button type="button" class="btn btn--retry" data-grid-retry>Try Again</button>
+    </li>
+  `;
+}
+
+function renderGridEmpty(): string {
+  return `
+    <li class="library__state library__state--empty">
+      <span class="material-symbols-outlined library__state-icon" aria-hidden="true">search_off</span>
+      <p class="library__state-text">No games found for the selected filters.</p>
+    </li>
+  `;
+}
+
+function getMaxVisiblePages(): number {
+  return window.innerWidth <= 599 ? 3 : 4;
+}
+
+function getPageWindow(current: number, total: number, maxVisible: number): number[] {
+  if (total <= maxVisible) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  let start = current - Math.floor(maxVisible / 2);
+  start = Math.max(1, start);
+  start = Math.min(start, total - maxVisible + 1);
+
+  return Array.from({ length: maxVisible }, (_, i) => start + i);
+}
+
 function renderPagination(page: number, totalPages: number): string {
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
+  const maxVisible = getMaxVisiblePages();
+  const window = getPageWindow(page, totalPages, maxVisible);
+
+  const pages = window
     .map(
-      (number) => `
-        <li>
-          <button
-            type="button"
-            class="page-btn${number === page ? ' is-current' : ''}"
-            data-page="${number}"
-            aria-label="Page ${number}"
-            ${number === page ? 'aria-current="page"' : ''}
-          >${number}</button>
-        </li>
-      `,
+      (num) => `
+      <li>
+        <button
+          type="button"
+          class="page-btn${num === page ? ' is-current' : ''}"
+          data-page="${num}"
+          aria-label="Page ${num}"
+          ${num === page ? 'aria-current="page"' : ''}
+        >${num}</button>
+      </li>
+    `,
     )
     .join('');
 
@@ -131,8 +182,8 @@ export function createLibrary(): HTMLElement {
     </div>
 
     <div class="library__toolbar">
-      <ul class="library__chips" aria-label="Filter by category">
-        ${renderChips()}
+      <ul class="library__chips" aria-label="Filter by category" data-chips>
+        ${renderChipsSkeleton()}
       </ul>
 
       <div class="sort">
@@ -144,7 +195,7 @@ export function createLibrary(): HTMLElement {
           aria-controls="library-sort-menu"
         >
           <span data-sort-label></span>
-          <span class="material-symbols-outlined sort__arrow" aria-hidden="true">arrow_drop_down</span>
+          <span class="material-symbols-outlined sort__arrow" aria-hidden="true"></span>
         </button>
         <ul class="sort-menu" id="library-sort-menu" role="listbox" aria-label="Sort games" hidden>
           ${renderSortOptions()}
@@ -153,7 +204,7 @@ export function createLibrary(): HTMLElement {
     </div>
 
     <p class="visually-hidden" aria-live="polite" data-count></p>
-    <ul class="library__grid" data-grid></ul>
+    <ul class="library__grid" data-grid>${renderCardsSkeleton()}</ul>
     <nav class="pagination" aria-label="Library pages" data-pagination></nav>
   `;
 
@@ -165,50 +216,123 @@ export function createLibrary(): HTMLElement {
 function initLibraryBehavior(section: HTMLElement): void {
   const grid = section.querySelector<HTMLUListElement>('[data-grid]');
   const pagination = section.querySelector<HTMLElement>('[data-pagination]');
-  const count = section.querySelector<HTMLElement>('[data-count]');
+  const countEl = section.querySelector<HTMLElement>('[data-count]');
+  const chipsContainer = section.querySelector<HTMLUListElement>('[data-chips]');
   const sortTrigger = section.querySelector<HTMLButtonElement>('.sort__trigger');
   const sortMenu = section.querySelector<HTMLUListElement>('.sort-menu');
   const sortLabelEl = section.querySelector<HTMLElement>('[data-sort-label]');
 
-  if (!grid || !pagination || !count || !sortTrigger || !sortMenu || !sortLabelEl) {
+  if (
+    !grid ||
+    !pagination ||
+    !countEl ||
+    !chipsContainer ||
+    !sortTrigger ||
+    !sortMenu ||
+    !sortLabelEl
+  ) {
     return;
   }
 
-  const chips = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-category]'));
   const sortItems = Array.from(sortMenu.querySelectorAll<HTMLLIElement>('[data-sort]'));
 
-  let category: CategoryFilter = 'all';
-  let sort: SortOption = 'rating-desc';
+  let category = 'all';
+  let sort = DEFAULT_SORT;
   let page = 1;
+  let totalPages = 1;
 
-  const render = (): void => {
-    const games = GAMES.filter((game) => category === 'all' || game.category === category).sort(
-      SORTERS[sort],
-    );
-    const totalPages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
-    page = Math.min(page, totalPages);
-    const pageGames = games.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-    chips.forEach((chip) => {
-      const isActive = chip.dataset.category === category;
-      chip.classList.toggle('is-active', isActive);
-      chip.setAttribute('aria-pressed', String(isActive));
-    });
-
+  const updateSortUI = (): void => {
     sortLabelEl.textContent = `Sort by: ${sortLabel(sort)}`;
     sortItems.forEach((item) => {
       const isSelected = item.dataset.sort === sort;
       item.classList.toggle('is-selected', isSelected);
       item.setAttribute('aria-selected', String(isSelected));
     });
+  };
 
-    count.textContent = `${games.length} ${games.length === 1 ? 'game' : 'games'}`;
-    grid.innerHTML = pageGames.length
-      ? pageGames.map(renderCard).join('')
-      : '<li class="library__empty">No games in this category yet.</li>';
+  const updateChipsUI = (): void => {
+    const chips = Array.from(chipsContainer.querySelectorAll<HTMLButtonElement>('[data-category]'));
+    chips.forEach((chip) => {
+      const isActive = chip.dataset.category === category;
+      chip.classList.toggle('is-active', isActive);
+      chip.setAttribute('aria-pressed', String(isActive));
+    });
+  };
 
-    pagination.hidden = totalPages <= 1;
-    pagination.innerHTML = renderPagination(page, totalPages);
+  const loadGames = async (): Promise<void> => {
+    grid.innerHTML = renderCardsSkeleton();
+    pagination.innerHTML = '';
+
+    try {
+      const result = await fetchGames({
+        category,
+        sort,
+        page,
+        limit: PAGE_SIZE,
+      });
+
+      const meta: GamesPageMeta = result.meta;
+      totalPages = Math.max(1, meta.totalPages);
+      page = meta.page;
+
+      countEl.textContent = `${meta.totalItems} ${meta.totalItems === 1 ? 'game' : 'games'}`;
+
+      if (result.data.length === 0) {
+        grid.innerHTML = renderGridEmpty();
+      } else {
+        grid.innerHTML = result.data.map(renderCard).join('');
+      }
+
+      pagination.innerHTML = renderPagination(page, totalPages);
+    } catch {
+      grid.innerHTML = renderGridError();
+      pagination.innerHTML = renderPagination(page, totalPages);
+      showSnackbar('Failed to load games', 'error');
+
+      grid.querySelector('[data-grid-retry]')?.addEventListener('click', () => {
+        loadGames();
+      });
+    }
+  };
+
+  const loadCategories = async (): Promise<void> => {
+    try {
+      const categories = await fetchCategories();
+
+      chipsContainer.innerHTML = renderChips(categories);
+
+      const defaultCategory = categories.find((c) => c.isDefault);
+      if (defaultCategory) {
+        category = defaultCategory.slug;
+      }
+
+      updateChipsUI();
+
+      const chips = Array.from(
+        chipsContainer.querySelectorAll<HTMLButtonElement>('[data-category]'),
+      );
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          category = chip.dataset.category ?? 'all';
+          page = 1;
+          updateChipsUI();
+          loadGames();
+        });
+      });
+    } catch {
+      chipsContainer.innerHTML = `
+        <li class="library__chips-error">
+          <span>Failed to load categories.</span>
+          <button type="button" class="btn btn--retry btn--retry-sm" data-chips-retry>Retry</button>
+        </li>
+      `;
+      showSnackbar('Failed to load categories', 'error');
+
+      chipsContainer.querySelector('[data-chips-retry]')?.addEventListener('click', () => {
+        chipsContainer.innerHTML = renderChipsSkeleton();
+        loadCategories();
+      });
+    }
   };
 
   const openSortMenu = (): void => {
@@ -225,20 +349,13 @@ function initLibraryBehavior(section: HTMLElement): void {
     if (returnFocus) sortTrigger.focus();
   };
 
-  const selectSort = (value: SortOption): void => {
+  const selectSort = (value: string): void => {
     sort = value;
     page = 1;
     closeSortMenu(true);
-    render();
+    updateSortUI();
+    loadGames();
   };
-
-  chips.forEach((chip) => {
-    chip.addEventListener('click', () => {
-      category = chip.dataset.category as CategoryFilter;
-      page = 1;
-      render();
-    });
-  });
 
   sortTrigger.addEventListener('click', () => {
     if (sortMenu.hidden) {
@@ -249,11 +366,11 @@ function initLibraryBehavior(section: HTMLElement): void {
   });
 
   sortItems.forEach((item, index) => {
-    item.addEventListener('click', () => selectSort(item.dataset.sort as SortOption));
+    item.addEventListener('click', () => selectSort(item.dataset.sort ?? DEFAULT_SORT));
     item.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        selectSort(item.dataset.sort as SortOption);
+        selectSort(item.dataset.sort ?? DEFAULT_SORT);
       } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
         const step = event.key === 'ArrowDown' ? 1 : -1;
@@ -285,9 +402,11 @@ function initLibraryBehavior(section: HTMLElement): void {
     if (!button || button.disabled) return;
 
     page = Number(button.dataset.page);
-    render();
+    loadGames();
     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
-  render();
+  updateSortUI();
+  loadCategories();
+  loadGames();
 }

@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../styles/tokens' as *;
 @use '../../styles/mixins' as *;
 
@@ -16,8 +17,6 @@
     padding: $space-3 $space-3 $space-5;
   }
 }
-
-// Intro
 
 .library__intro {
   display: flex;
@@ -57,8 +56,6 @@
     line-height: $line-height-sm;
   }
 }
-
-// Filters & sort
 
 .library__toolbar {
   display: flex;
@@ -250,8 +247,6 @@
   }
 }
 
-// Grid & cards
-
 .library__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, $size-library-card-min), 1fr));
@@ -318,7 +313,6 @@
   min-width: 0;
   padding: $space-3;
 
-  // Mobile reflows into: title+badge / description / stats+price / full-width button.
   @include mobile-down {
     display: grid;
     grid-template-areas:
@@ -495,8 +489,6 @@
   }
 }
 
-// Pagination
-
 .pagination {
   display: flex;
   flex-direction: row;
@@ -554,4 +546,106 @@
     border-color: $color-border-muted;
     opacity: 0.5;
   }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.skeleton-pulse {
+  background: linear-gradient(
+    90deg,
+    $color-border-light 25%,
+    color.adjust($color-border-light, $lightness: -3%) 37%,
+    $color-border-light 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: $radius-sm;
+}
+
+.skeleton-bar {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    $color-border-light 25%,
+    color.adjust($color-border-light, $lightness: -3%) 37%,
+    $color-border-light 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: $radius-sm;
+}
+
+.chip--skeleton {
+  display: inline-block;
+  width: 80px;
+  height: $button-height-sm-plus;
+  border: $border-regular solid transparent;
+
+  @include mobile-down {
+    height: $button-height-xs;
+  }
+}
+
+.library-card--skeleton {
+  pointer-events: none;
+
+  .library-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    padding: $space-3;
+  }
+}
+
+.library__state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-9 0;
+  text-align: center;
+}
+
+.library__state-icon {
+  font-size: $font-size-xxl;
+  color: $color-text-muted;
+}
+
+.library__state--error .library__state-icon {
+  color: $color-error;
+}
+
+.library__state-text {
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-md;
+  line-height: $line-height-md;
+  color: $color-text-muted;
+
+  @include mobile-down {
+    font-size: $font-size-sm;
+  }
+}
+
+.library__chips-error {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: $color-error;
+}
+
+.btn--retry-sm {
+  padding: $space-1 $space-3;
+  font-size: $font-size-xs;
 }
