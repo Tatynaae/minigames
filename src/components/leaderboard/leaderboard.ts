@@ -1,16 +1,7 @@
 import './leaderboard.scss';
-import leaderboardData from '../../data/leaderboard.json';
+import { fetchLeaderboard, type ApiLeaderboardEntry } from '../../services/api';
 import fireIcon from '../../assets/icons/fire-icon.svg';
-
-interface LeaderboardEntry {
-  rank: number;
-  playerName: string;
-  gamesPlayed: number;
-  totalScore: number;
-  streakDays: number;
-  favoriteGameSlug: string;
-  favoriteGameName: string;
-}
+import { showSnackbar } from '../snackbar/snackbar';
 
 const AVATAR_COLORS = [
   'var(--avatar-yellow)',
@@ -32,7 +23,7 @@ function formatScore(score: number): string {
   return score.toLocaleString('en-US');
 }
 
-function renderRow(player: LeaderboardEntry, index: number): string {
+function renderRow(player: ApiLeaderboardEntry, index: number): string {
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
 
   return `
@@ -60,19 +51,71 @@ function getMaxVisiblePlayers(): number {
   return 5;
 }
 
-export function createLeaderboard(): HTMLElement {
-  const maxVisible = getMaxVisiblePlayers();
-  const players = (leaderboardData.data as LeaderboardEntry[]).slice(0, maxVisible);
+function renderSkeletonRows(count: number): string {
+  return Array.from(
+    { length: count },
+    () => `
+    <tr class="leaderboard__skeleton-row">
+      <td><span class="skeleton-bar skeleton-bar--rank"></span></td>
+      <td>
+        <div class="leaderboard__player">
+          <span class="skeleton-circle"></span>
+          <span class="skeleton-bar skeleton-bar--name"></span>
+        </div>
+      </td>
+      <td><span class="skeleton-bar skeleton-bar--num"></span></td>
+      <td><span class="skeleton-bar skeleton-bar--num"></span></td>
+      <td><span class="skeleton-bar skeleton-bar--streak"></span></td>
+      <td><span class="skeleton-bar skeleton-bar--tag"></span></td>
+    </tr>
+  `,
+  ).join('');
+}
 
-  const section = document.createElement('section');
-  section.className = 'players-section';
-  section.setAttribute('aria-label', 'Top players');
-  section.innerHTML = `
-    <div class="section-header">
-      <span class="section-header__bar" aria-hidden="true"></span>
-      <h2 class="section-header__title">Top Players</h2>
+function renderSkeleton(count: number): string {
+  return `
+    <div class="leaderboard-wrapper">
+      <table class="leaderboard">
+        <caption class="visually-hidden">Loading leaderboard data</caption>
+        <thead>
+          <tr>
+            <th scope="col">Rank</th>
+            <th scope="col">Player</th>
+            <th scope="col">Games Played</th>
+            <th scope="col">Total Score</th>
+            <th scope="col">Streak</th>
+            <th scope="col">Favorite Game</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderSkeletonRows(count)}
+        </tbody>
+      </table>
     </div>
+  `;
+}
 
+function renderError(): string {
+  return `
+    <div class="leaderboard-state leaderboard-state--error" role="alert">
+      <span class="material-symbols-outlined leaderboard-state__icon" aria-hidden="true">error</span>
+      <p class="leaderboard-state__text">Failed to load leaderboard data.</p>
+      <button type="button" class="btn btn--retry" data-leaderboard-retry>Try Again</button>
+    </div>
+  `;
+}
+
+function renderEmpty(): string {
+  return `
+    <div class="leaderboard-state leaderboard-state--empty">
+      <span class="material-symbols-outlined leaderboard-state__icon" aria-hidden="true">leaderboard</span>
+      <p class="leaderboard-state__text">No leaderboard data available yet.</p>
+    </div>
+  `;
+}
+
+function renderTable(players: ApiLeaderboardEntry[]): string {
+  return `
     <div class="leaderboard-wrapper">
       <table class="leaderboard">
         <caption class="visually-hidden">Leaderboard of the top ${players.length} players this week</caption>
@@ -92,6 +135,53 @@ export function createLeaderboard(): HTMLElement {
       </table>
     </div>
   `;
+}
+
+export function createLeaderboard(): HTMLElement {
+  const section = document.createElement('section');
+  section.className = 'players-section';
+  section.setAttribute('aria-label', 'Top players');
+
+  const maxVisible = getMaxVisiblePlayers();
+
+  section.innerHTML = `
+    <div class="section-header">
+      <span class="section-header__bar" aria-hidden="true"></span>
+      <h2 class="section-header__title">Top Players</h2>
+    </div>
+    <div class="leaderboard-content" data-leaderboard-content>
+      ${renderSkeleton(maxVisible)}
+    </div>
+  `;
+
+  loadLeaderboardData(section);
 
   return section;
+}
+
+async function loadLeaderboardData(section: HTMLElement): Promise<void> {
+  const content = section.querySelector<HTMLElement>('[data-leaderboard-content]');
+  if (!content) return;
+
+  const maxVisible = getMaxVisiblePlayers();
+  content.innerHTML = renderSkeleton(maxVisible);
+
+  try {
+    const players = await fetchLeaderboard();
+
+    if (players.length === 0) {
+      content.innerHTML = renderEmpty();
+      return;
+    }
+
+    const visiblePlayers = players.slice(0, maxVisible);
+    content.innerHTML = renderTable(visiblePlayers);
+  } catch {
+    content.innerHTML = renderError();
+    showSnackbar('Failed to load leaderboard', 'error');
+
+    content.querySelector('[data-leaderboard-retry]')?.addEventListener('click', () => {
+      loadLeaderboardData(section);
+    });
+  }
 }

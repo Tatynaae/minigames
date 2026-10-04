@@ -1,0 +1,80 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as *;
+
+.snackbar {
+  position: fixed;
+  bottom: $space-7;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-5;
+  min-width: 280px;
+  max-width: 480px;
+  border: $border-medium solid $color-primary-dark;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card-sm;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-compact;
+  color: $color-white;
+  opacity: 0;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  pointer-events: none;
+
+  @include mobile-down {
+    min-width: 0;
+    max-width: calc(100vw - #{$space-6});
+    bottom: $space-3;
+    padding: $space-2 $space-3;
+    font-size: $font-size-xs;
+  }
+
+  &.snackbar--visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &.snackbar--success {
+    background: #1b7a3d;
+  }
+
+  &.snackbar--error {
+    background: $color-error;
+  }
+}
+
+.snackbar__icon {
+  flex-shrink: 0;
+  font-size: $font-size-lg;
+}
+
+.snackbar__message {
+  flex: 1;
+}
+
+.snackbar__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $size-md;
+  height: $size-md;
+  color: $color-white;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .material-symbols-outlined {
+    font-size: $font-size-md;
+  }
+}

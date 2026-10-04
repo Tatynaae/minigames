@@ -1,6 +1,8 @@
 import './games-carousel.scss';
-import { GAMES, formatLikes } from '../../data/games';
+import { fetchFeaturedGames, type ApiFeaturedGame } from '../../services/api';
+import { formatLikes, getGameCardImage } from '../../data/games';
 import { GAME_DETAIL_OPEN_EVENT } from '../game-detail/game-detail';
+import { showSnackbar } from '../snackbar/snackbar';
 
 type CardSize = 'hidden' | 'collapsed' | 'regular' | 'featured';
 
@@ -12,14 +14,14 @@ interface GameCardData {
   likes: string;
 }
 
-function getFeaturedGames(): GameCardData[] {
-  return GAMES.filter((game) => game.featured).map((game) => ({
+function mapApiGame(game: ApiFeaturedGame): GameCardData {
+  return {
     slug: game.slug,
-    image: game.image,
+    image: getGameCardImage(game.slug) || game.cardImage,
     name: game.name,
     rating: game.rating.toFixed(1),
     likes: formatLikes(game.likesCount),
-  }));
+  };
 }
 
 const INITIAL_FEATURED_INDEX = 0;
@@ -54,12 +56,42 @@ function renderGameCard(game: GameCardData): string {
   `;
 }
 
-export function createGamesCarousel(): HTMLElement {
-  const games = getFeaturedGames();
+function renderSkeleton(): string {
+  const cards = Array.from(
+    { length: 5 },
+    () => `
+    <li class="game-card game-card--skeleton">
+      <div class="skeleton-pulse skeleton-pulse--card"></div>
+    </li>
+  `,
+  ).join('');
+  return `<ul class="carousel-track">${cards}</ul>`;
+}
 
+function renderError(): string {
+  return `
+    <div class="carousel-state carousel-state--error" role="alert">
+      <span class="material-symbols-outlined carousel-state__icon" aria-hidden="true">error</span>
+      <p class="carousel-state__text">Failed to load featured games.</p>
+      <button type="button" class="btn btn--retry" data-carousel-retry>Try Again</button>
+    </div>
+  `;
+}
+
+function renderEmpty(): string {
+  return `
+    <div class="carousel-state carousel-state--empty">
+      <span class="material-symbols-outlined carousel-state__icon" aria-hidden="true">sports_esports</span>
+      <p class="carousel-state__text">No featured games available right now.</p>
+    </div>
+  `;
+}
+
+export function createGamesCarousel(): HTMLElement {
   const section = document.createElement('section');
   section.className = 'games-section';
   section.setAttribute('aria-label', 'New games');
+
   section.innerHTML = `
     <div class="games-section__header">
       <div class="section-header">
@@ -75,15 +107,47 @@ export function createGamesCarousel(): HTMLElement {
         </button>
       </div>
     </div>
-
-    <ul class="carousel-track">
-      ${games.map(renderGameCard).join('')}
-    </ul>
+    <div class="carousel-content" data-carousel-content>
+      ${renderSkeleton()}
+    </div>
   `;
 
-  initCarouselBehavior(section);
+  loadCarouselData(section);
 
   return section;
+}
+
+async function loadCarouselData(section: HTMLElement): Promise<void> {
+  const content = section.querySelector<HTMLElement>('[data-carousel-content]');
+  if (!content) return;
+
+  content.innerHTML = renderSkeleton();
+
+  try {
+    const games = await fetchFeaturedGames();
+
+    if (games.length === 0) {
+      content.innerHTML = renderEmpty();
+      return;
+    }
+
+    const cardData = games.map(mapApiGame);
+
+    content.innerHTML = `
+      <ul class="carousel-track">
+        ${cardData.map(renderGameCard).join('')}
+      </ul>
+    `;
+
+    initCarouselBehavior(section);
+  } catch {
+    content.innerHTML = renderError();
+    showSnackbar('Failed to load featured games', 'error');
+
+    content.querySelector('[data-carousel-retry]')?.addEventListener('click', () => {
+      loadCarouselData(section);
+    });
+  }
 }
 
 const AUTOPLAY_INTERVAL = 4000;
