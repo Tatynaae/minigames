@@ -1,103 +1,141 @@
 import './game-detail.scss';
-import { GAMES, formatLikes, getGameHeroImage, getGameDetail, type Game } from '../../data/games';
+import { getGameHeroImage } from '../../data/games';
+import {
+  fetchGameDetail,
+  fetchGameComments,
+  type ApiGameDetail,
+  type ApiComment,
+} from '../../services/api';
+import { showSnackbar } from '../snackbar/snackbar';
 
 export const GAME_DETAIL_OPEN_EVENT = 'game-detail:open';
 
-interface RecordEntry {
-  medal: string;
-  name: string;
-  score: number;
-  time: string;
-}
-
-interface CommentEntry {
-  name: string;
-  avatar: string;
-  time: string;
-  text: string;
-  likes: number;
-  liked: boolean;
-}
-
-const DEFAULT_RECORDS: RecordEntry[] = [
-  { medal: '\u{1F947}', name: 'ForestSpirit', score: 356700, time: '2 days ago' },
-  { medal: '\u{1F948}', name: 'TeaBrewer', score: 332400, time: '5 days ago' },
-  { medal: '\u{1F949}', name: 'HerbalistPath', score: 308900, time: '1 week ago' },
-];
-
-const DEFAULT_COMMENTS: CommentEntry[] = [
-  {
-    name: 'ForestDweller',
-    avatar: '#BCE3FF',
-    time: '3 hours ago',
-    text: 'This game is absolutely delightful! The art style reminds me of a Studio Ghibli film. Spent the whole evening playing.',
-    likes: 12,
-    liked: false,
-  },
-  {
-    name: 'HerbalTeaLover',
-    avatar: '#FFD02B',
-    time: '1 day ago',
-    text: 'Perfect for unwinding after a long day. The soundtrack is incredibly soothing too.',
-    likes: 5,
-    liked: false,
-  },
-  {
-    name: 'CottageCoreMia',
-    avatar: '#E9EEF6',
-    time: '3 days ago',
-    text: 'Just discovered this gem and I am hooked! Love the attention to detail in every scene.',
-    likes: 8,
-    liked: true,
-  },
-];
+const MEDALS = ['\u{1F947}', '\u{1F948}', '\u{1F949}'];
 
 function formatScore(score: number): string {
   return score.toLocaleString();
 }
 
-function renderRecordRow(record: RecordEntry): string {
+function formatLikes(count: number): string {
+  return count >= 1000 ? `${(count / 1000).toFixed(1)}K` : String(count);
+}
+
+function relativeTime(isoDate: string): string {
+  const now = Date.now();
+  const then = new Date(isoDate).getTime();
+  const seconds = Math.floor((now - then) / 1000);
+
+  if (seconds < 60) return 'just now';
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} day ago`;
+
+  const weeks = Math.floor(days / 7);
+  if (weeks <= 3) return `${weeks} week ago`;
+
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months} month ago`;
+
+  const years = Math.floor(days / 365);
+  return `${years} year ago`;
+}
+
+function renderSkeleton(): string {
+  return `
+    <div class="game-detail__hero game-detail__hero--skeleton">
+      <button type="button" class="game-detail__close" aria-label="Close dialog">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="game-detail__body">
+      <div class="skeleton-bar" style="width: 60%; height: 28px"></div>
+      <div class="skeleton-bar" style="width: 100%; height: 14px"></div>
+      <div class="skeleton-bar" style="width: 90%; height: 14px"></div>
+      <div class="skeleton-bar" style="width: 70%; height: 14px"></div>
+      <div style="display:flex;gap:12px">
+        <div class="skeleton-bar" style="flex:1;height:56px"></div>
+        <div class="skeleton-bar" style="flex:1;height:56px"></div>
+        <div class="skeleton-bar" style="flex:1;height:56px"></div>
+        <div class="skeleton-bar" style="flex:1;height:56px"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderError(): string {
+  return `
+    <div class="game-detail__hero game-detail__hero--skeleton">
+      <button type="button" class="game-detail__close" aria-label="Close dialog">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="game-detail__body">
+      <div class="game-detail__state game-detail__state--error" role="alert">
+        <span class="material-symbols-outlined game-detail__state-icon" aria-hidden="true">error</span>
+        <p class="game-detail__state-text">Failed to load game details.</p>
+        <button type="button" class="btn btn--retry" data-detail-retry>Try Again</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderRecordRow(record: {
+  position: number;
+  playerName: string;
+  score: number;
+  achievedAt: string;
+}): string {
+  const medal = MEDALS[record.position - 1] ?? `#${record.position}`;
   return `
     <div class="game-detail__record">
       <span class="game-detail__record-left">
-        <span class="game-detail__record-medal">${record.medal}</span>
-        <span class="game-detail__record-name">${record.name}</span>
+        <span class="game-detail__record-medal">${medal}</span>
+        <span class="game-detail__record-name">${record.playerName}</span>
       </span>
       <span class="game-detail__record-right">
         <span class="game-detail__record-score">${formatScore(record.score)} pts</span>
-        <span class="game-detail__record-time">${record.time}</span>
+        <span class="game-detail__record-time">${relativeTime(record.achievedAt)}</span>
       </span>
     </div>
   `;
 }
 
-function renderComment(comment: CommentEntry, index: number): string {
-  const initial = comment.name.charAt(0).toUpperCase();
+function renderComment(comment: ApiComment): string {
+  const initial = comment.authorName.charAt(0).toUpperCase();
+  const colors = ['#BCE3FF', '#FFD02B', '#E9EEF6', '#C8F7DC', '#F3D1F4'];
+  const colorIndex = comment.authorName.charCodeAt(0) % colors.length;
+  const avatarColor = colors[colorIndex];
+
   return `
-    <div class="game-detail__comment" data-comment-index="${index}">
+    <div class="game-detail__comment">
       <div class="game-detail__comment-header">
-        <span class="game-detail__avatar" style="background-color: ${comment.avatar}">${initial}</span>
-        <span class="game-detail__comment-name">${comment.name}</span>
-        <span class="game-detail__comment-time">${comment.time}</span>
+        <span class="game-detail__avatar" style="background-color: ${avatarColor}">${initial}</span>
+        <span class="game-detail__comment-name">${comment.authorName}</span>
+        <span class="game-detail__comment-time">${relativeTime(comment.createdAt)}</span>
       </div>
       <p class="game-detail__comment-text">${comment.text}</p>
       <div class="game-detail__comment-footer">
-        <button type="button" class="game-detail__like-btn${comment.liked ? ' is-liked' : ''}" data-like-index="${index}">
-          <span class="material-symbols-outlined${comment.liked ? ' is-filled' : ''}">favorite</span>
-          <span class="game-detail__like-count">${comment.likes}</span>
-        </button>
+        <span class="game-detail__like-display">
+          <span class="material-symbols-outlined${comment.isLikedByCurrentUser ? ' is-filled' : ''}">favorite</span>
+          <span class="game-detail__like-count">${comment.likesCount}</span>
+        </span>
       </div>
     </div>
   `;
 }
 
-function renderDialogContent(game: Game): string {
+function renderDialogContent(
+  game: ApiGameDetail,
+  comments: ApiComment[],
+  totalComments: number,
+): string {
   const heroImage = getGameHeroImage(game.slug);
-  const detail = getGameDetail(game.slug);
-  const categoryLabel = game.category.charAt(0).toUpperCase() + game.category.slice(1);
-
-  const records = DEFAULT_RECORDS;
-  const comments = DEFAULT_COMMENTS;
 
   return `
     <div class="game-detail__hero" style="background-image: url('${heroImage}')">
@@ -121,24 +159,24 @@ function renderDialogContent(game: Game): string {
         </div>
       </div>
 
-      <p class="game-detail__desc">${detail.description}</p>
+      <p class="game-detail__desc">${game.fullDescription}</p>
 
       <div class="game-detail__widgets">
         <div class="game-detail__widget">
           <span class="game-detail__widget-label">Genre</span>
-          <span class="game-detail__widget-value">${categoryLabel}</span>
+          <span class="game-detail__widget-value">${game.specs.genre}</span>
         </div>
         <div class="game-detail__widget">
           <span class="game-detail__widget-label">Players</span>
-          <span class="game-detail__widget-value">${detail.players}</span>
+          <span class="game-detail__widget-value">${game.specs.players}</span>
         </div>
         <div class="game-detail__widget">
           <span class="game-detail__widget-label">Duration</span>
-          <span class="game-detail__widget-value">${detail.duration}</span>
+          <span class="game-detail__widget-value">${game.specs.duration}</span>
         </div>
         <div class="game-detail__widget">
           <span class="game-detail__widget-label">Price</span>
-          <span class="game-detail__widget-value">${game.price}</span>
+          <span class="game-detail__widget-value">${game.specs.price}</span>
         </div>
       </div>
 
@@ -150,29 +188,27 @@ function renderDialogContent(game: Game): string {
         </button>
       </div>
 
-      <div class="game-detail__records">
-        <h3 class="game-detail__section-title">
-          <span>\u{1F3C6}</span>
-          <span>Top Records</span>
-        </h3>
-        <div class="game-detail__record-list">
-          ${records.map(renderRecordRow).join('')}
+      ${
+        game.topRecords.length > 0
+          ? `
+        <div class="game-detail__records">
+          <h3 class="game-detail__section-title">
+            <span>\u{1F3C6}</span>
+            <span>Top Records</span>
+          </h3>
+          <div class="game-detail__record-list">
+            ${game.topRecords.map(renderRecordRow).join('')}
+          </div>
         </div>
-      </div>
+      `
+          : ''
+      }
 
       <div class="game-detail__comments">
-        <h3 class="game-detail__section-title" data-comment-count>Comments (${comments.length})</h3>
+        <h3 class="game-detail__section-title">Comments (${totalComments})</h3>
 
-        <div class="game-detail__comment-form">
-          <span class="game-detail__avatar game-detail__avatar--user">U</span>
-          <textarea class="game-detail__textarea" placeholder="Add a comment..." rows="1"></textarea>
-          <button type="button" class="game-detail__send-btn" aria-label="Send comment">
-            <span class="material-symbols-outlined">send</span>
-          </button>
-        </div>
-
-        <div class="game-detail__comment-list" data-comment-list>
-          ${comments.map((c, i) => renderComment(c, i)).join('')}
+        <div class="game-detail__comment-list">
+          ${comments.length > 0 ? comments.map(renderComment).join('') : '<p class="game-detail__no-comments">No comments yet.</p>'}
         </div>
       </div>
     </div>
@@ -182,8 +218,6 @@ function renderDialogContent(game: Game): string {
 export function createGameDetail(): HTMLDialogElement {
   const dialog = document.createElement('dialog');
   dialog.className = 'game-detail';
-
-  let commentLikes: { liked: boolean; count: number }[] = [];
 
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) {
@@ -195,128 +229,39 @@ export function createGameDetail(): HTMLDialogElement {
     document.body.style.overflow = '';
   });
 
-  function openDialog(game: Game): void {
-    commentLikes = DEFAULT_COMMENTS.map((c) => ({
-      liked: c.liked,
-      count: c.likes,
-    }));
-
-    dialog.innerHTML = renderDialogContent(game);
+  async function openDialog(slug: string): Promise<void> {
+    dialog.innerHTML = renderSkeleton();
     document.body.style.overflow = 'hidden';
     dialog.showModal();
     dialog.scrollTop = 0;
 
-    initDialogBehavior();
-  }
+    dialog.querySelector('.game-detail__close')?.addEventListener('click', () => dialog.close());
 
-  function initDialogBehavior(): void {
-    const closeBtn = dialog.querySelector<HTMLButtonElement>('.game-detail__close');
-    const favBtn = dialog.querySelector<HTMLButtonElement>('.game-detail__fav-btn');
-    const textarea = dialog.querySelector<HTMLTextAreaElement>('.game-detail__textarea');
-    const sendBtn = dialog.querySelector<HTMLButtonElement>('.game-detail__send-btn');
-    const commentList = dialog.querySelector<HTMLElement>('[data-comment-list]');
-    const commentCountEl = dialog.querySelector<HTMLElement>('[data-comment-count]');
+    try {
+      const [game, commentsResult] = await Promise.all([
+        fetchGameDetail(slug),
+        fetchGameComments(slug, 3, 'newest'),
+      ]);
 
-    closeBtn?.addEventListener('click', () => dialog.close());
+      dialog.innerHTML = renderDialogContent(
+        game,
+        commentsResult.data,
+        commentsResult.meta.totalComments,
+      );
+      dialog.querySelector('.game-detail__close')?.addEventListener('click', () => dialog.close());
+    } catch {
+      dialog.innerHTML = renderError();
+      showSnackbar('Failed to load game details', 'error');
 
-    if (favBtn) {
-      favBtn.addEventListener('click', () => {
-        const isFavorited = favBtn.classList.toggle('is-favorited');
-        const icon = favBtn.querySelector('.material-symbols-outlined');
-        const label = favBtn.querySelector('.game-detail__fav-label');
-        if (icon) {
-          icon.classList.toggle('is-filled', isFavorited);
-        }
-        if (label) {
-          label.textContent = isFavorited ? 'Remove from Favorites' : 'Add to Favorites';
-        }
+      dialog.querySelector('.game-detail__close')?.addEventListener('click', () => dialog.close());
+      dialog.querySelector('[data-detail-retry]')?.addEventListener('click', () => {
+        openDialog(slug);
       });
     }
-
-    if (textarea) {
-      textarea.addEventListener('input', () => {
-        textarea.style.height = 'auto';
-        textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
-      });
-
-      textarea.addEventListener('keydown', (event: KeyboardEvent) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          submitComment();
-        }
-      });
-    }
-
-    sendBtn?.addEventListener('click', submitComment);
-
-    function submitComment(): void {
-      if (!textarea || !commentList || !commentCountEl) return;
-
-      const text = textarea.value.trim();
-      if (!text) return;
-
-      const newIndex = commentList.children.length;
-      commentLikes.push({ liked: false, count: 0 });
-
-      const commentHtml = `
-        <div class="game-detail__comment" data-comment-index="${newIndex}">
-          <div class="game-detail__comment-header">
-            <span class="game-detail__avatar" style="background-color: #FFD02B">U</span>
-            <span class="game-detail__comment-name">You</span>
-            <span class="game-detail__comment-time">Just now</span>
-          </div>
-          <p class="game-detail__comment-text">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-          <div class="game-detail__comment-footer">
-            <button type="button" class="game-detail__like-btn" data-like-index="${newIndex}">
-              <span class="material-symbols-outlined">favorite</span>
-              <span class="game-detail__like-count">0</span>
-            </button>
-          </div>
-        </div>
-      `;
-
-      commentList.insertAdjacentHTML('afterbegin', commentHtml);
-      bindLikeButton(commentList.firstElementChild as HTMLElement);
-
-      const totalComments = commentList.children.length;
-      commentCountEl.textContent = `Comments (${totalComments})`;
-
-      textarea.value = '';
-      textarea.style.height = 'auto';
-    }
-
-    dialog.querySelectorAll<HTMLButtonElement>('[data-like-index]').forEach((btn) => {
-      bindLikeButton(btn.closest('.game-detail__comment') as HTMLElement);
-    });
-  }
-
-  function bindLikeButton(commentEl: HTMLElement | null): void {
-    if (!commentEl) return;
-
-    const btn = commentEl.querySelector<HTMLButtonElement>('[data-like-index]');
-    if (!btn) return;
-
-    btn.addEventListener('click', () => {
-      const index = Number(btn.dataset.likeIndex);
-      const state = commentLikes[index];
-      if (!state) return;
-
-      state.liked = !state.liked;
-      state.count += state.liked ? 1 : -1;
-
-      btn.classList.toggle('is-liked', state.liked);
-      const icon = btn.querySelector('.material-symbols-outlined');
-      const countEl = btn.querySelector('.game-detail__like-count');
-
-      if (icon) icon.classList.toggle('is-filled', state.liked);
-      if (countEl) countEl.textContent = String(state.count);
-    });
   }
 
   document.addEventListener(GAME_DETAIL_OPEN_EVENT, ((event: CustomEvent<string>) => {
-    const slug = event.detail;
-    const game = GAMES.find((g) => g.slug === slug);
-    if (game) openDialog(game);
+    openDialog(event.detail);
   }) as EventListener);
 
   return dialog;
