@@ -583,24 +583,9 @@
   border-radius: $radius-sm;
 }
 
-.skeleton-bar--title {
-  width: 60%;
-  height: $size-sm;
-}
-
-.skeleton-bar--text {
-  width: 100%;
-  height: $font-size-sm;
-}
-
-.skeleton-bar--text-short {
-  width: 80%;
-  height: $font-size-sm;
-}
-
 .chip--skeleton {
   display: inline-block;
-  width: $space-10;
+  width: 80px;
   height: $button-height-sm-plus;
   border: $border-regular solid transparent;
 
