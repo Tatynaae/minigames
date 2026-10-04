@@ -286,6 +286,10 @@ const CARD_IMAGES: Record<string, string> = {
   'the-wild-at-heart': theWildAtHeartCard,
 };
 
+export function getGameCardImage(slug: string): string {
+  return CARD_IMAGES[slug] ?? '';
+}
+
 export const GAMES: Game[] = (gamesSeed.data as GameSeedEntry[])
   .filter((game) => CARD_IMAGES[game.slug])
   .map((game) => ({ ...game, image: CARD_IMAGES[game.slug] }));
